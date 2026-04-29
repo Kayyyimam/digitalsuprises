@@ -3,122 +3,136 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>For You</title>
+<title>Mama Appreciation</title>
 
 <style>
   body {
     margin: 0;
-    background: #000;
-    color: #d7ecff;
+    background: #ffffff;
     font-family: Arial, sans-serif;
     overflow: hidden;
   }
 
-  .container, .final-screen {
+  /* soft emotional background */
+  body::before {
+    content: "";
+    position: absolute;
+    width: 120%;
+    height: 120%;
+    top: -10%;
+    left: -10%;
+    background: radial-gradient(circle, rgba(255,0,0,0.05), transparent 60%);
+    animation: breathe 6s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.05); opacity: 1; }
+  }
+
+  /* SCREEN */
+  .screen, .final {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* CENTER WRAPPER FIX (prevents drifting issue) */
+  .center-wrapper {
     position: absolute;
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    text-align: center;
-    flex-direction: column;
-    transition: opacity 1.5s ease;
   }
 
-  .spotlight {
+  /* ✨ IMPROVED MAMA DESIGN */
+  .mama {
+    font-size: 4rem;
+    font-weight: 800;
+    color: #cc0000;
+    letter-spacing: 6px;
+    position: relative;
+    text-transform: uppercase;
+    text-shadow: 0 0 18px rgba(204,0,0,0.25);
+  }
+
+  .mama::after {
+    content: "";
     position: absolute;
-    width: 360px;
-    height: 360px;
-    background: radial-gradient(circle, rgba(120,180,255,0.14), transparent 70%);
-    border-radius: 50%;
-    animation: glow 7s ease-in-out infinite alternate;
+    width: 60%;
+    height: 3px;
+    background: rgba(204,0,0,0.4);
+    bottom: -10px;
+    left: 20%;
+    border-radius: 5px;
   }
 
-  @keyframes glow {
-    from { transform: scale(1); opacity: 0.45; }
-    to { transform: scale(1.25); opacity: 0.9; }
+  /* CORNER MESSAGES */
+  .msg {
+    position: absolute;
+    font-size: 1.05rem;
+    max-width: 220px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 1.2s ease;
+    color: #b30000;
+    line-height: 1.4;
   }
 
-  .line {
-    font-size: 1.35rem;
-    margin: 10px 0;
-    min-height: 24px;
+  .show {
+    opacity: 1;
+    transform: translateY(0);
   }
 
-  .main {
-    font-size: 2.1rem;
-    font-weight: 600;
-    margin-top: 20px;
-    color: #ffffff;
-    text-shadow: 0 0 14px #6fb3ff;
-    min-height: 40px;
+  .m1 { top: 80px; left: 80px; }
+  .m2 { top: 80px; right: 80px; }
+  .m3 { bottom: 80px; left: 80px; }
+  .m4 { bottom: 80px; right: 80px; }
+
+  /* HEART */
+  .heart {
+    display: inline-block;
+    margin-left: 6px;
+    animation: float 2s ease-in-out infinite;
   }
 
-  /* FINAL SCREEN */
-  .final-screen {
+  @keyframes float {
+    0% { transform: translateY(0) scale(1); opacity: 0.6; }
+    50% { transform: translateY(-7px) scale(1.2); opacity: 1; }
+    100% { transform: translateY(0) scale(1); opacity: 0.6; }
+  }
+
+  /* FINAL SCREEN FIXED CENTER */
+  .final {
     display: none;
-    transform: scale(1);
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
   }
 
   .final-text {
-    font-size: 2.5rem;
-    color: #ffffff;
-    text-shadow: 0 0 18px #6fb3ff;
+    font-size: 3rem;
+    font-weight: 800;
+    color: #cc0000;
     opacity: 0;
-    position: relative;
-    z-index: 2;
+    transform: scale(0.9);
+    transition: all 1.5s ease;
   }
 
-  .sub {
+  .final-sub {
     margin-top: 12px;
     font-size: 1.1rem;
-    color: #bcdcff;
+    color: #a30000;
     opacity: 0;
-    position: relative;
-    z-index: 2;
+    transition: all 1.5s ease;
   }
 
-  .btn {
-    margin-top: 26px;
-    padding: 8px 16px;
-    font-size: 0.9rem;
-    font-weight: 300;
-    border: 1px solid rgba(120,180,255,0.4);
-    border-radius: 20px;
-    background: transparent;
-    color: #cfe6ff;
-    cursor: pointer;
-    opacity: 0.85;
-    position: relative;
-    z-index: 2;
-  }
-
-  /* HEART FIXED */
-  .heart {
-    position: absolute;
-    width: 420px;
-    height: 420px;
-    opacity: 0.12;
-    z-index: 1;
-  }
-
-  .heart path {
-    fill: none;
-    stroke: rgba(120,180,255,0.7);
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-
-    stroke-dasharray: 2000;
-    stroke-dashoffset: 2000;
-
-    animation: drawHeart 5.5s ease forwards;
-    filter: drop-shadow(0 0 6px rgba(120,180,255,0.25));
-  }
-
-  @keyframes drawHeart {
-    to { stroke-dashoffset: 0; }
+  .show-final {
+    opacity: 1;
+    transform: scale(1);
   }
 
 </style>
@@ -126,130 +140,61 @@
 
 <body>
 
-<!-- SCENE 1 -->
-<div class="container" id="scene1">
-  <div class="spotlight"></div>
+<!-- SCREEN 1 -->
+<div class="screen" id="screen1">
 
-  <div class="line" id="l1"></div>
-  <div class="line" id="l2"></div>
-  <div class="line" id="l3"></div>
+  <div class="center-wrapper">
+    <div class="mama">MAMA</div>
+  </div>
 
-  <div class="main" id="mainText"></div>
+  <div class="msg m1" id="m1">You are my strength <span class="heart">❤️</span></div>
+  <div class="msg m2" id="m2">You never gave up on me <span class="heart">❤️</span></div>
+  <div class="msg m3" id="m3">Your love shaped my life <span class="heart">❤️</span></div>
+  <div class="msg m4" id="m4">I am forever grateful <span class="heart">❤️</span></div>
+
 </div>
 
-<!-- SCENE 2 -->
-<div class="final-screen" id="scene2">
-
-  <!-- HEART -->
-  <svg class="heart" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet">
-    <path d="M256 464s-184-112-224-272C-8 120 72 32 160 32c48 0 88 32 96 48
-             8-16 48-48 96-48 88 0 168 88 128 160-40 160-224 272-224 272z"/>
-  </svg>
-
-  <div class="spotlight"></div>
-
-  <div class="final-text" id="finalText">
-    You are the best husband in the world Ahmad.
-  </div>
-
-  <div class="sub" id="subText">
-    Not because of what you do… but because of who you are.
-  </div>
-
-  <button class="btn" onclick="restart()">Again</button>
+<!-- FINAL SCREEN -->
+<div class="final" id="screen2">
+  <div class="final-text" id="finalText">I love you soo much ❤️</div>
+  <div class="final-sub" id="finalSub">Forever and always.</div>
 </div>
 
 <script>
-const lines = [
-  "You carry more than you ever say",
-  "You stay strong even when you're tired",
-  "And still manage to be my peace"
-];
+const msgs = ["m1","m2","m3","m4"];
+let i = 0;
 
-const mainMessage = "Thank you for everything you are.";
-
-let timeout;
-
-function type(el, text, speed, done) {
-  let i = 0;
-  el.textContent = "";
-
-  function step() {
-    el.textContent += text[i];
-    i++;
-
-    if (i < text.length) {
-      setTimeout(step, speed);
-    } else {
-      setTimeout(done, 800);
-    }
+function showMessages() {
+  if (i >= msgs.length) {
+    setTimeout(showFinal, 1200);
+    return;
   }
 
-  step();
+  document.getElementById(msgs[i]).classList.add("show");
+  i++;
+
+  setTimeout(showMessages, 1400);
 }
 
-function run() {
-  clearTimeout(timeout);
+function showFinal() {
+  document.getElementById("screen1").style.opacity = 0;
 
-  const scene1 = document.getElementById("scene1");
-  const scene2 = document.getElementById("scene2");
+  setTimeout(() => {
+    document.getElementById("screen1").style.display = "none";
+    document.getElementById("screen2").style.display = "flex";
 
-  scene1.style.display = "flex";
-  scene2.style.display = "none";
-  scene1.style.opacity = 1;
+    setTimeout(() => {
+      document.getElementById("finalText").classList.add("show-final");
+    }, 400);
 
-  const l1 = document.getElementById("l1");
-  const l2 = document.getElementById("l2");
-  const l3 = document.getElementById("l3");
-  const main = document.getElementById("mainText");
+    setTimeout(() => {
+      document.getElementById("finalSub").classList.add("show-final");
+    }, 1300);
 
-  type(l1, lines[0], 55, () => {
-    type(l2, lines[1], 40, () => {
-      type(l3, lines[2], 40, () => {
-        type(main, mainMessage, 65, () => {
-
-          // emotional pause (silence)
-          timeout = setTimeout(() => {
-
-            scene1.style.opacity = 0;
-
-            setTimeout(() => {
-              scene1.style.display = "none";
-              scene2.style.display = "flex";
-
-              // cinematic reveal
-              scene2.style.transform = "scale(0.98)";
-              setTimeout(() => {
-                scene2.style.transition = "transform 3s ease, opacity 1.5s ease";
-                scene2.style.transform = "scale(1.04)";
-              }, 200);
-
-              // text reveal
-              setTimeout(() => {
-                document.getElementById("finalText").style.opacity = 1;
-                document.getElementById("finalText").style.transition = "2s";
-              }, 900);
-
-              setTimeout(() => {
-                document.getElementById("subText").style.opacity = 1;
-                document.getElementById("subText").style.transition = "2s";
-              }, 1700);
-
-            }, 1200);
-
-          }, 1200);
-
-        });
-      });
-    });
-  });
+  }, 1000);
 }
 
-function restart() {
-  run();
-}
-
-run();
+showMessages();
 </script>
 
 </body>
