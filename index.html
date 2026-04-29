@@ -3,114 +3,158 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>I Love You Umma</title>
+<title>Thank You Baba</title>
 
 <style>
   body {
     margin: 0;
-    background: black;
+    background: #000;
+    color: #e6f2ff;
+    font-family: Arial, sans-serif;
     overflow: hidden;
-    font-family: serif;
   }
 
-  .center-text {
+  .container, .final-screen {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
-    z-index: 2;
-    color: #d8b4ff;
-    text-shadow: 0 0 10px #a855f7, 0 0 25px #9333ea;
+    flex-direction: column;
   }
 
-  .center-text h1 {
-    margin: 0;
-    font-size: 2.5rem;
-  }
-
-  canvas {
+  .spotlight {
     position: absolute;
-    top: 0;
-    left: 0;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(77,166,255,0.15), transparent 70%);
+    border-radius: 50%;
+    animation: glow 6s ease-in-out infinite alternate;
   }
+
+  @keyframes glow {
+    from { transform: scale(1); opacity: 0.5; }
+    to { transform: scale(1.2); opacity: 0.8; }
+  }
+
+  .line {
+    opacity: 0;
+    transform: translateY(20px);
+    font-size: 1.4rem;
+    margin: 8px 0;
+  }
+
+  .main {
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin-top: 20px;
+    color: #ffffff;
+    text-shadow: 0 0 10px #4da6ff;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .final-screen {
+    display: none;
+  }
+
+  .final-text {
+    font-size: 2rem;
+    color: #ffffff;
+    text-shadow: 0 0 12px #4da6ff;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .btn {
+    margin-top: 20px;
+    padding: 8px 18px;
+    font-size: 0.95rem;
+    font-weight: 300;
+    border: 1px solid rgba(77,166,255,0.5);
+    border-radius: 20px;
+    background: transparent;
+    color: #bcdcff;
+    cursor: pointer;
+  }
+
 </style>
 </head>
 
 <body>
 
-<div class="center-text">
-  <h1>I love you<br>Maryam</h1>
+<!-- SCENE 1 -->
+<div class="container" id="scene1">
+  <div class="spotlight"></div>
+
+  <div class="line" id="l1">You’ve always been there for Us</div>
+  <div class="line" id="l2">Even when We didn’t notice</div>
+  <div class="line" id="l3">Even when We didn’t say thank you</div>
+
+  <div class="main" id="mainText">Thank you for everything Baba 💙</div>
 </div>
 
-<canvas id="c"></canvas>
+<!-- SCENE 2 -->
+<div class="final-screen" id="scene2">
+  <div class="spotlight"></div>
+
+  <div class="final-text" id="finalText">We appreciate you sooo much 💙</div>
+  <button class="btn" onclick="restart()">Again</button>
+</div>
 
 <script>
-const canvas = document.getElementById("c");
-const ctx = canvas.getContext("2d");
+let timeout;
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+function runAnimation() {
+  // reset everything
+  clearTimeout(timeout);
 
-let t = 0;
-let points = [];
+  document.getElementById("scene1").style.display = "flex";
+  document.getElementById("scene2").style.display = "none";
 
-// Heart equation
-function heart(t) {
-  return {
-    x: 16 * Math.pow(Math.sin(t), 3),
-    y: -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t))
-  };
+  // force reset animations
+  const ids = ["l1","l2","l3","mainText","finalText"];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.animation = "none";
+      el.offsetHeight; // force reflow
+      el.style.animation = "";
+    }
+  });
+
+  // SCENE 1 animations
+  document.getElementById("l1").style.animation = "show 1.5s forwards 1s";
+  document.getElementById("l2").style.animation = "show 1.5s forwards 3s";
+  document.getElementById("l3").style.animation = "show 1.5s forwards 5s";
+  document.getElementById("mainText").style.animation = "show 2s forwards 7s";
+
+  // switch scene
+  timeout = setTimeout(() => {
+    document.getElementById("scene1").style.display = "none";
+    document.getElementById("scene2").style.display = "flex";
+
+    document.getElementById("finalText").style.animation = "show 2s forwards";
+  }, 11000);
 }
 
-function draw() {
-ctx.fillStyle = "#000";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  let centerX = canvas.width / 2;
-  let centerY = canvas.height / 2;
-
-  // Generate next point
-  if (t <= Math.PI * 2) {
-    let p = heart(t);
-
-    let x = centerX + p.x * 15;
-    let y = centerY + p.y * 15;
-
-    points.push({x, y});
-    t += 0.02;
-  }
-
-  // Draw glowing trail
-  ctx.beginPath();
-  for (let i = 0; i < points.length; i++) {
-    let p = points[i];
-    ctx.lineTo(p.x, p.y);
-  }
-
-  ctx.strokeStyle = "#a855f7";
-  ctx.lineWidth = 3;
-  ctx.shadowBlur = 20;
-  ctx.shadowColor = "#a855f7";
-  ctx.stroke();
-
-  // Draw moving glowing dot
-  if (points.length > 0) {
-    let last = points[points.length - 1];
-
-    ctx.beginPath();
-    ctx.arc(last.x, last.y, 5, 0, Math.PI * 2);
-    ctx.fillStyle = "#d8b4ff";
-    ctx.shadowBlur = 25;
-    ctx.shadowColor = "#c084fc";
-    ctx.fill();
-  }
-
-  requestAnimationFrame(draw);
+function restart() {
+  runAnimation();
 }
 
-draw();
+runAnimation();
 </script>
+
+<style>
+@keyframes show {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>
 
 </body>
 </html>
