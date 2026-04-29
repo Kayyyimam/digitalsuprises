@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thank You Baba</title>
+
+<style>
+  body {
+    margin: 0;
+    background: #000;
+    color: #e6f2ff;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+  }
+
+  .container, .final-screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+  }
+
+  .spotlight {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(77,166,255,0.15), transparent 70%);
+    border-radius: 50%;
+    animation: glow 6s ease-in-out infinite alternate;
+  }
+
+  @keyframes glow {
+    from { transform: scale(1); opacity: 0.5; }
+    to { transform: scale(1.2); opacity: 0.8; }
+  }
+
+  .line {
+    opacity: 0;
+    transform: translateY(20px);
+    font-size: 1.4rem;
+    margin: 8px 0;
+  }
+
+  .main {
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin-top: 20px;
+    color: #ffffff;
+    text-shadow: 0 0 10px #4da6ff;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .final-screen {
+    display: none;
+  }
+
+  .final-text {
+    font-size: 2rem;
+    color: #ffffff;
+    text-shadow: 0 0 12px #4da6ff;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .btn {
+    margin-top: 20px;
+    padding: 8px 18px;
+    font-size: 0.95rem;
+    font-weight: 300;
+    border: 1px solid rgba(77,166,255,0.5);
+    border-radius: 20px;
+    background: transparent;
+    color: #bcdcff;
+    cursor: pointer;
+  }
+
+</style>
+</head>
+
+<body>
+
+<!-- SCENE 1 -->
+<div class="container" id="scene1">
+  <div class="spotlight"></div>
+
+  <div class="line" id="l1">You’ve always been there for Us</div>
+  <div class="line" id="l2">Even when We didn’t notice</div>
+  <div class="line" id="l3">Even when We didn’t say thank you</div>
+
+  <div class="main" id="mainText">Thank you for everything Baba 💙</div>
+</div>
+
+<!-- SCENE 2 -->
+<div class="final-screen" id="scene2">
+  <div class="spotlight"></div>
+
+  <div class="final-text" id="finalText">We appreciate you sooo much 💙</div>
+  <button class="btn" onclick="restart()">Again</button>
+</div>
+
+<script>
+let timeout;
+
+function runAnimation() {
+  // reset everything
+  clearTimeout(timeout);
+
+  document.getElementById("scene1").style.display = "flex";
+  document.getElementById("scene2").style.display = "none";
+
+  // force reset animations
+  const ids = ["l1","l2","l3","mainText","finalText"];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.animation = "none";
+      el.offsetHeight; // force reflow
+      el.style.animation = "";
+    }
+  });
+
+  // SCENE 1 animations
+  document.getElementById("l1").style.animation = "show 1.5s forwards 1s";
+  document.getElementById("l2").style.animation = "show 1.5s forwards 3s";
+  document.getElementById("l3").style.animation = "show 1.5s forwards 5s";
+  document.getElementById("mainText").style.animation = "show 2s forwards 7s";
+
+  // switch scene
+  timeout = setTimeout(() => {
+    document.getElementById("scene1").style.display = "none";
+    document.getElementById("scene2").style.display = "flex";
+
+    document.getElementById("finalText").style.animation = "show 2s forwards";
+  }, 11000);
+}
+
+function restart() {
+  runAnimation();
+}
+
+runAnimation();
+</script>
+
+<style>
+@keyframes show {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>
+
+</body>
+</html>
