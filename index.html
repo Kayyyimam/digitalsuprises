@@ -3,105 +3,103 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>I'm Sorry</title>
+<title>Congratulations Doctor</title>
 
 <style>
   body {
     margin: 0;
-    background: #0a0a0a;
-    font-family: Arial, sans-serif;
     overflow: hidden;
-    color: #e8e8e8;
+    background: #ffffff;
+    font-family: Arial, sans-serif;
   }
 
-  /* soft glow background */
-  body::before {
-    content: "";
+  canvas {
     position: absolute;
-    inset: -10%;
-    background: radial-gradient(circle, rgba(255,255,255,0.04), transparent 65%);
-    animation: breathe 8s ease-in-out infinite;
-  }
-
-  @keyframes breathe {
-    0%, 100% { transform: scale(1); opacity: 0.35; }
-    50% { transform: scale(1.05); opacity: 0.6; }
-  }
-
-  /* SCREEN */
-  .screen {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-  }
-
-  /* LETTER WRAPPER (mobile-safe centering) */
-  .letter {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    text-align: center;
-    padding: 24px;
-  }
-
-  /* RESPONSIVE TEXT (IMPORTANT FIX) */
-  .text {
-    font-size: clamp(1rem, 4.5vw, 1.4rem);
-    max-width: 90%;
-    line-height: 1.9;
-    color: #d8d8d8;
-    transition: transform 1s ease;
-    word-wrap: break-word;
-  }
-
-  .cursor {
-    display: inline-block;
-    width: 6px;
-    height: 16px;
-    background: #d8d8d8;
-    margin-left: 4px;
-    animation: blink 0.9s infinite;
-  }
-
-  @keyframes blink {
-    50% { opacity: 0; }
-  }
-
-  .divider {
-    width: 80px;
-    height: 1px;
-    background: rgba(255,255,255,0.12);
-    margin: 24px 0;
-  }
-
-  /* FINAL SCREEN (FIXED CENTERING) */
-  .final {
-    position: absolute;
-    inset: 0;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    text-align: center;
-    padding: 20px;
-  }
-
-  .final-text {
-    font-size: clamp(1.8rem, 7vw, 2.8rem);
-    font-weight: 600;
-    color: #ff6b6b;
-    opacity: 0;
-    transform: scale(0.92);
-    transition: all 2s ease;
-    max-width: 90%;
-    line-height: 1.4;
-  }
-
-  .show {
+    top: 0;
+    left: 0;
     opacity: 1;
-    transform: scale(1);
+    transition: opacity 1.5s ease;
+  }
+
+  /* 🔥 TRUE CENTERING METHOD */
+  .center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 90%;
+    max-width: 800px;
+  }
+
+  /* CARD */
+  .card {
+    padding: 30px 22px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+  }
+
+  .cap {
+    font-size: 60px;
+    opacity: 0;
+    transform: translateY(-20px);
+    animation: drop 0.9s ease forwards;
+  }
+
+  @keyframes drop {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .title {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 900;
+    margin-top: 10px;
+    opacity: 0;
+    animation: pop 1.2s ease forwards 0.8s;
+
+    background: linear-gradient(90deg, #111, #444, #111);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  @keyframes pop {
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .message {
+    margin-top: 15px;
+    font-size: clamp(1rem, 3.5vw, 1.25rem);
+    line-height: 1.7;
+    color: #222;
+    opacity: 0;
+    animation: fadeIn 1.2s ease forwards 1.6s;
+  }
+
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  .doctor {
+    margin-top: 18px;
+    font-size: clamp(1.6rem, 5vw, 2.5rem);
+    font-weight: 900;
+    color: #b8860b;
+    opacity: 0;
+    animation: glow 1.5s ease forwards 2.4s;
+    text-shadow: 0 0 15px rgba(184, 134, 11, 0.3);
+  }
+
+  @keyframes glow {
+    to { opacity: 1; }
+  }
+
+  .subtitle {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: #555;
+    opacity: 0;
+    animation: fadeIn 1.2s ease forwards 3.2s;
   }
 
 </style>
@@ -109,72 +107,82 @@
 
 <body>
 
-<div class="screen" id="screen1">
+<canvas id="confetti"></canvas>
 
-  <div class="letter">
-    <div class="text" id="text"></div>
-    <div class="divider"></div>
-  </div>
+<div class="center">
+  <div class="card">
 
-</div>
+    <div class="cap">🎓</div>
 
-<div class="final" id="screen2">
-  <div class="final-text" id="finalText">
-    I’m really sorry baby.<br>
-    Please forgive me.
+    <div class="title">Congratulations</div>
+
+    <div class="message">
+      Your hard work, dedication, and sleepless nights have finally paid off.
+      This is not just an achievement — it is a transformation.
+    </div>
+
+    <div class="doctor">DOCTOR</div>
+
+    <div class="subtitle">You did it. We are so proud of you.</div>
+
   </div>
 </div>
 
 <script>
 
-const lines = [
-  "I’ve taken time to think about everything properly…",
-  "and I want to be honest with you.",
-  "I understand now that my actions affected you more than I realised.",
-  "and I regret that deeply.",
-  "You didn’t deserve that from me."
-];
+/* CONFETTI (UNCHANGED) */
 
-let i = 0;
-let char = 0;
-let current = "";
-const textEl = document.getElementById("text");
+const canvas = document.getElementById("confetti");
+const ctx = canvas.getContext("2d");
 
-function type() {
-  if (i >= lines.length) {
-    setTimeout(showFinal, 1400);
-    return;
-  }
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-  if (char < lines[i].length) {
-    current += lines[i][char];
-    textEl.innerHTML = current + '<span class="cursor"></span>';
-    char++;
-    setTimeout(type, 45);
-  } else {
-    current += "<br><br>";
-    i++;
-    char = 0;
-    setTimeout(type, 1100);
-  }
+let pieces = [];
+
+for (let i = 0; i < 80; i++) {
+  pieces.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height - canvas.height,
+    r: Math.random() * 4 + 2,
+    d: Math.random() * 5 + 1.2,
+    color: `hsl(${Math.random() * 360}, 70%, 60%)`
+  });
 }
 
-function showFinal() {
-  document.getElementById("screen1").style.opacity = 0;
+let running = true;
 
-  setTimeout(() => {
-    document.getElementById("screen1").style.display = "none";
-    const final = document.getElementById("screen2");
-    final.style.display = "flex";
+function draw() {
+  if (!running) return;
 
-    setTimeout(() => {
-      document.getElementById("finalText").classList.add("show");
-    }, 600);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  }, 1000);
+  pieces.forEach(p => {
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    p.y += p.d;
+    p.x += Math.sin(p.y * 0.01);
+
+    if (p.y > canvas.height) {
+      p.y = -10;
+      p.x = Math.random() * canvas.width;
+    }
+  });
+
+  requestAnimationFrame(draw);
 }
 
-type();
+draw();
+
+/* STOP AFTER 7 SECONDS */
+
+setTimeout(() => {
+  running = false;
+  canvas.style.opacity = 0;
+}, 7000);
 
 </script>
 
