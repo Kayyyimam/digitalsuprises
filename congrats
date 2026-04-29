@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Congratulations Doctor</title>
+
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: #ffffff;
+    font-family: Arial, sans-serif;
+  }
+
+  canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 1;
+    transition: opacity 1.5s ease;
+  }
+
+  /* 🔥 TRUE CENTERING METHOD */
+  .center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 90%;
+    max-width: 800px;
+  }
+
+  /* CARD */
+  .card {
+    padding: 30px 22px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+  }
+
+  .cap {
+    font-size: 60px;
+    opacity: 0;
+    transform: translateY(-20px);
+    animation: drop 0.9s ease forwards;
+  }
+
+  @keyframes drop {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .title {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 900;
+    margin-top: 10px;
+    opacity: 0;
+    animation: pop 1.2s ease forwards 0.8s;
+
+    background: linear-gradient(90deg, #111, #444, #111);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  @keyframes pop {
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .message {
+    margin-top: 15px;
+    font-size: clamp(1rem, 3.5vw, 1.25rem);
+    line-height: 1.7;
+    color: #222;
+    opacity: 0;
+    animation: fadeIn 1.2s ease forwards 1.6s;
+  }
+
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  .doctor {
+    margin-top: 18px;
+    font-size: clamp(1.6rem, 5vw, 2.5rem);
+    font-weight: 900;
+    color: #b8860b;
+    opacity: 0;
+    animation: glow 1.5s ease forwards 2.4s;
+    text-shadow: 0 0 15px rgba(184, 134, 11, 0.3);
+  }
+
+  @keyframes glow {
+    to { opacity: 1; }
+  }
+
+  .subtitle {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: #555;
+    opacity: 0;
+    animation: fadeIn 1.2s ease forwards 3.2s;
+  }
+
+</style>
+</head>
+
+<body>
+
+<canvas id="confetti"></canvas>
+
+<div class="center">
+  <div class="card">
+
+    <div class="cap">🎓</div>
+
+    <div class="title">Congratulations</div>
+
+    <div class="message">
+      Your hard work, dedication, and sleepless nights have finally paid off.
+      This is not just an achievement — it is a transformation.
+    </div>
+
+    <div class="doctor">DOCTOR</div>
+
+    <div class="subtitle">You did it. We are so proud of you.</div>
+
+  </div>
+</div>
+
+<script>
+
+/* CONFETTI (UNCHANGED) */
+
+const canvas = document.getElementById("confetti");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let pieces = [];
+
+for (let i = 0; i < 80; i++) {
+  pieces.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height - canvas.height,
+    r: Math.random() * 4 + 2,
+    d: Math.random() * 5 + 1.2,
+    color: `hsl(${Math.random() * 360}, 70%, 60%)`
+  });
+}
+
+let running = true;
+
+function draw() {
+  if (!running) return;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  pieces.forEach(p => {
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    p.y += p.d;
+    p.x += Math.sin(p.y * 0.01);
+
+    if (p.y > canvas.height) {
+      p.y = -10;
+      p.x = Math.random() * canvas.width;
+    }
+  });
+
+  requestAnimationFrame(draw);
+}
+
+draw();
+
+/* STOP AFTER 7 SECONDS */
+
+setTimeout(() => {
+  running = false;
+  canvas.style.opacity = 0;
+}, 7000);
+
+</script>
+
+</body>
+</html>
