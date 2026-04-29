@@ -1,128 +1,128 @@
 <!doctype html>
-<html class="h-full">
+<html lang="en" class="h-full">
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Proposal</title>
+  <title>Things I Don't Say Enough</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="/_sdk/element_sdk.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&amp;display=swap" rel="stylesheet">
   <style>
-    html, body { height: 100%; margin: 0; }
-    body { font-family: 'Cormorant Garamond', serif; }
-
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
-    @keyframes glow {
-      0%, 100% { text-shadow: 0 0 20px #ff2d55, 0 0 40px #ff2d55, 0 0 80px #ff2d55; transform: scale(1); }
-      50% { text-shadow: 0 0 40px #ff6b8a, 0 0 80px #ff6b8a, 0 0 120px #ff6b8a; transform: scale(1.05); }
+    @keyframes pulse-glow {
+      0%, 100% { text-shadow: 0 0 20px rgba(255,180,120,0.3); }
+      50% { text-shadow: 0 0 40px rgba(255,180,120,0.6); }
     }
-
-    @keyframes sparkle {
-      0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
-      50% { opacity: 1; transform: scale(1) rotate(180deg); }
+    @keyframes gentle-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
     }
-
-    @keyframes floatHeart {
-      0% { opacity: 1; transform: translateY(0) scale(1); }
-      100% { opacity: 0; transform: translateY(-200px) scale(0.5); }
+    .msg-reveal {
+      animation: fadeUp 1s ease forwards;
     }
-
-    .line { opacity: 0; animation: fadeUp 1.5s ease forwards; }
-    .glow-heart { animation: glow 2s ease-in-out infinite; }
-
-    .sparkle {
-      position: absolute;
-      width: 6px; height: 6px;
-      background: #ff6b8a;
-      border-radius: 50%;
-      animation: sparkle 2s ease-in-out infinite;
+    .final-glow {
+      animation: pulse-glow 3s ease-in-out infinite;
     }
-
-    .float-heart {
-      position: absolute;
-      font-size: 24px;
-      animation: floatHeart 3s ease-out forwards;
-      pointer-events: none;
+    .float-prompt {
+      animation: gentle-float 2.5s ease-in-out infinite;
     }
   </style>
   <style>body { box-sizing: border-box; }</style>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
  </head>
- <body class="h-full bg-black text-white overflow-auto">
-  <div id="app" class="h-full w-full flex flex-col items-center justify-center relative px-6 py-12">
-   <div id="sparkles" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
-   <div id="content" class="relative z-10 text-center max-w-2xl space-y-8">
-    <p id="l1" class="line text-2xl md:text-3xl text-rose-200/80 italic" style="animation-delay:0.5s">From the moment I saw you...</p>
-    <p id="l2" class="line text-2xl md:text-3xl text-rose-200/80 italic" style="animation-delay:2.5s">Every day with you feels like a dream...</p>
-    <p id="l3" class="line text-2xl md:text-3xl text-rose-200/80 italic" style="animation-delay:4.5s">You are my everything...</p>
-    <div class="line" style="animation-delay:7s">
-     <p id="final" class="text-4xl md:text-6xl font-semibold text-rose-400 glow-heart mt-8">Will you marry me?</p>
-     <div class="mt-10 text-6xl glow-heart">
-      💍
-     </div><button id="yesBtn" onclick="celebrate()" class="mt-10 px-10 py-4 bg-rose-600 hover:bg-rose-500 text-white text-2xl font-semibold rounded-full transition-all hover:scale-110 shadow-lg shadow-rose-600/50">Yes! 💕</button>
-    </div>
+ <body class="h-full bg-black">
+  <div id="app" class="h-full w-full flex flex-col items-center justify-center overflow-auto relative" style="font-family: 'Cormorant Garamond', serif;">
+   <div id="title-area" class="absolute top-12 left-0 right-0 text-center px-6">
+    <h1 id="main-title" class="text-lg tracking-[0.3em] uppercase text-neutral-500 font-semibold"></h1>
    </div>
-   <div id="hearts" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+   <div id="messages-container" class="flex flex-col items-center gap-8 px-6 max-w-lg w-full py-24">
+   </div>
+   <div id="prompt" class="absolute bottom-10 left-0 right-0 text-center float-prompt">
+    <p class="text-neutral-600 text-sm tracking-widest uppercase">tap anywhere</p>
+   </div>
   </div>
   <script>
-    // Sparkles
-    const sparklesEl = document.getElementById('sparkles');
-    for (let i = 0; i < 20; i++) {
-      const s = document.createElement('div');
-      s.className = 'sparkle';
-      s.style.left = Math.random() * 100 + '%';
-      s.style.top = Math.random() * 100 + '%';
-      s.style.animationDelay = Math.random() * 3 + 's';
-      sparklesEl.appendChild(s);
+    const messages = [
+      "I'm proud of you.",
+      "You make the world softer\njust by being in it.",
+      "I notice the little things you do\nfor everyone else.",
+      "You deserve the love\nyou keep giving away.",
+      "I'm sorry for the times\nI didn't show up.",
+      "Your presence is a gift\nI never want to take for granted.",
+      "Thank you for staying.",
+      "You are enough.\nYou have always been enough."
+    ];
+
+    const finalMessage = "I love you.\nMore than I'll ever\nknow how to say.";
+
+    let currentIndex = 0;
+    let finished = false;
+    const container = document.getElementById('messages-container');
+    const prompt = document.getElementById('prompt');
+
+    function revealNext() {
+      if (finished) return;
+
+      if (currentIndex < messages.length) {
+        const el = document.createElement('div');
+        el.className = 'msg-reveal text-center';
+        el.style.opacity = '0';
+        const text = messages[currentIndex];
+        el.innerHTML = text.split('\n').map(line =>
+          `<p class="text-2xl md:text-3xl text-neutral-300 leading-relaxed" style="font-family: 'Cormorant Garamond', serif; font-style: italic;">${line}</p>`
+        ).join('');
+        container.appendChild(el);
+        currentIndex++;
+
+        if (currentIndex >= messages.length) {
+          prompt.querySelector('p').textContent = 'one more';
+        }
+      } else {
+        finished = true;
+        prompt.style.display = 'none';
+
+        const el = document.createElement('div');
+        el.className = 'msg-reveal text-center mt-8';
+        el.style.opacity = '0';
+        el.innerHTML = finalMessage.split('\n').map(line =>
+          `<p class="text-3xl md:text-4xl font-semibold final-glow" style="color: #f0b080; font-family: 'Cormorant Garamond', serif;">${line}</p>`
+        ).join('');
+        container.appendChild(el);
+      }
+
+      container.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
-    function celebrate() {
-      const heartsEl = document.getElementById('hearts');
-      const emojis = ['❤️','💕','💖','💗','✨','💍'];
-      for (let i = 0; i < 30; i++) {
-        const h = document.createElement('div');
-        h.className = 'float-heart';
-        h.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-        h.style.left = Math.random() * 100 + '%';
-        h.style.bottom = '0';
-        h.style.animationDelay = Math.random() * 2 + 's';
-        heartsEl.appendChild(h);
-      }
-      document.getElementById('yesBtn').textContent = '💕 Forever & Always 💕';
-    }
+    document.getElementById('app').addEventListener('click', revealNext);
 
     // Element SDK
     const defaultConfig = {
-      line_1: "From the moment I saw you...",
-      line_2: "Every day with you feels like a dream...",
-      line_3: "You are my everything...",
-      final_question: "Will you marry me?",
-      primary_color: "#000000",
-      accent_color: "#e11d48",
-      text_color: "#fecdd3",
+      main_title: "Things I Don't Say Enough",
+      background_color: "#000000",
+      text_color: "#d4d4d4",
+      accent_color: "#f0b080",
       font_family: "Cormorant Garamond",
       font_size: 16
     };
 
     function applyConfig(config) {
-      const c = { ...defaultConfig, ...config };
-      document.getElementById('l1').textContent = c.line_1;
-      document.getElementById('l2').textContent = c.line_2;
-      document.getElementById('l3').textContent = c.line_3;
-      document.getElementById('final').textContent = c.final_question;
-      document.getElementById('app').style.backgroundColor = c.primary_color;
-      document.getElementById('final').style.color = c.accent_color;
-      document.querySelectorAll('#l1,#l2,#l3').forEach(el => el.style.color = c.text_color);
-      const font = c.font_family + ', serif';
-      document.body.style.fontFamily = font;
-      const base = c.font_size;
-      document.querySelectorAll('#l1,#l2,#l3').forEach(el => el.style.fontSize = base * 1.75 + 'px');
-      document.getElementById('final').style.fontSize = base * 3 + 'px';
+      document.getElementById('main-title').textContent = config.main_title || defaultConfig.main_title;
+      const bg = config.background_color || defaultConfig.background_color;
+      document.getElementById('app').style.backgroundColor = bg;
+      const textColor = config.text_color || defaultConfig.text_color;
+      document.querySelectorAll('.msg-reveal p:not(.final-glow)').forEach(p => p.style.color = textColor);
+      const accent = config.accent_color || defaultConfig.accent_color;
+      document.querySelectorAll('.final-glow').forEach(p => p.style.color = accent);
+      const font = config.font_family || defaultConfig.font_family;
+      document.getElementById('app').style.fontFamily = `${font}, serif`;
+      const size = config.font_size || defaultConfig.font_size;
+      document.getElementById('main-title').style.fontSize = `${size}px`;
+      document.querySelectorAll('.msg-reveal p:not(.final-glow)').forEach(p => p.style.fontSize = `${size * 1.7}px`);
+      document.querySelectorAll('.final-glow').forEach(p => p.style.fontSize = `${size * 2}px`);
     }
 
     window.elementSdk.init({
@@ -130,7 +130,7 @@
       onConfigChange: async (config) => applyConfig(config),
       mapToCapabilities: (config) => ({
         recolorables: [
-          { get: () => config.primary_color || defaultConfig.primary_color, set: (v) => { config.primary_color = v; window.elementSdk.setConfig({ primary_color: v }); } },
+          { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
           { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
           { get: () => config.accent_color || defaultConfig.accent_color, set: (v) => { config.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); } }
         ],
@@ -139,12 +139,11 @@
         fontSizeable: { get: () => config.font_size || defaultConfig.font_size, set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); } }
       }),
       mapToEditPanelValues: (config) => new Map([
-        ["line_1", config.line_1 || defaultConfig.line_1],
-        ["line_2", config.line_2 || defaultConfig.line_2],
-        ["line_3", config.line_3 || defaultConfig.line_3],
-        ["final_question", config.final_question || defaultConfig.final_question]
+        ["main_title", config.main_title || defaultConfig.main_title]
       ])
     });
+
+    applyConfig(defaultConfig);
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9f4047b680ab587a',t:'MTc3NzQ4NjQwMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9f404d6187f2587a',t:'MTc3NzQ4NjYzMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
