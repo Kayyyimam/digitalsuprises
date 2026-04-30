@@ -1,703 +1,569 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Qur'an Hifz Challenge Quiz</title>
-  <style>
-    :root {
-      --bg: #f7fbf8;
-      --panel: rgba(255, 255, 255, 0.82);
-      --emerald: #0f7a5a;
-      --emerald-soft: #2ea07d;
-      --gold: #c9a75f;
-      --text: #1e2a23;
-      --muted: #5f7369;
-      --line: #d8e7df;
-      --ok: #d8f3e3;
-      --bad: #fde2e2;
-      --shadow: 0 24px 55px rgba(20, 68, 52, 0.14);
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Class of 2026 Graduation Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --gold: #d4af37;
+    --gold-light: #f5e07a;
+    --blue: #6ea8ff;
+    --cream: #faf3e8;
+    --dark: #090b16;
+    --card: rgba(12,16,35,0.94);
+    --border: rgba(255,255,255,0.08);
+    --muted: rgba(255,255,255,0.68);
+    --muted-strong: rgba(255,255,255,0.9);
+  }
 
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: "Inter", "Segoe UI", Tahoma, sans-serif;
-      color: var(--text);
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at 10% 10%, rgba(15, 122, 90, 0.09), transparent 36%),
-        radial-gradient(circle at 90% 8%, rgba(201, 167, 95, 0.12), transparent 28%),
-        linear-gradient(180deg, #000000, var(--bg));
-      overflow-x: hidden;
-    }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body {
+    background: radial-gradient(circle at top left, rgba(126,193,255,0.18), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(212,175,55,0.12), transparent 22%),
+                linear-gradient(180deg, #06080f 0%, #090b16 100%);
+    color: var(--cream);
+    font-family: 'Montserrat', sans-serif;
+    overflow-x: hidden;
+    position: relative;
+  }
 
-    #particles {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1;
-    }
+  #sparkle-canvas,
+  #confetti-layer,
+  .blob { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .blob { border-radius: 50%; filter: blur(120px); opacity: 0.16; }
+  .blob-1 { width: 520px; height: 520px; background: rgba(110,168,255,0.35); top: -180px; left: -140px; }
+  .blob-2 { width: 420px; height: 420px; background: rgba(212,175,55,0.32); bottom: -140px; right: -100px; animation: float 18s ease-in-out infinite alternate; }
+  .blob-3 { width: 320px; height: 320px; background: rgba(112,195,255,0.26); top: 36%; left: 52%; animation: float 14s ease-in-out infinite alternate-reverse; }
+  @keyframes float { from { transform: translate(0,0) scale(1); } to { transform: translate(32px, 28px) scale(1.05); } }
 
-    .noise {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.09;
-      background-image: radial-gradient(circle, #0f7a5a 0.6px, transparent 0.6px);
-      background-size: 18px 18px;
-    }
+  #app { position: relative; z-index: 1; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 22px; }
+  .screen { display: none; width: 100%; max-width: 700px; animation: fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) both; }
+  .screen.active { display: flex; flex-direction: column; align-items: center; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
 
-    .float-orb {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(38px);
-      pointer-events: none;
-      z-index: 0;
-      animation: drift 16s ease-in-out infinite;
-    }
-    .orb-1 { width: 220px; height: 220px; top: 4%; left: -70px; background: rgba(15, 122, 90, 0.22); }
-    .orb-2 { width: 260px; height: 260px; right: -90px; top: 35%; background: rgba(201, 167, 95, 0.2); animation-duration: 19s; }
+  .card {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 44px 40px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 24px 70px rgba(0,0,0,0.35);
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 28px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.04), transparent 55%);
+    pointer-events: none;
+  }
+  .card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 28px;
+    background: radial-gradient(circle at top right, rgba(110,168,255,0.14), transparent 25%);
+    pointer-events: none;
+  }
 
-    .page {
-      position: relative;
-      z-index: 2;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 24px 14px;
-    }
+  .display-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.4rem, 6vw, 4.2rem);
+    font-weight: 800;
+    text-align: center;
+    line-height: 1.05;
+    background: linear-gradient(135deg, var(--blue), var(--gold-light), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+  .subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    text-align: center;
+    color: var(--muted);
+    margin-bottom: 22px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    color: var(--gold-light);
+    text-align: center;
+    margin-bottom: 8px;
+  }
 
-    .card {
-      width: min(980px, 96vw);
-      border: 1px solid rgba(216, 231, 223, 0.9);
-      border-radius: 24px;
-      background: var(--panel);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      position: relative;
-      isolation: isolate;
-    }
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: -1px;
-      border-radius: 24px;
-      pointer-events: none;
-      background: linear-gradient(125deg, rgba(15, 122, 90, 0.17), transparent 44%, rgba(201, 167, 95, 0.16));
-      z-index: -1;
-    }
+  .ornament { display: flex; align-items: center; gap: 12px; color: var(--gold); margin: 18px 0; width: 100%; justify-content: center; }
+  .ornament::before, .ornament::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(212,175,55,0.5), transparent); max-width: 130px; }
 
-    .screen {
-      display: none;
-      padding: clamp(20px, 4.2vw, 38px);
-      animation: reveal 420ms ease both;
-    }
-    .screen.active { display: block; }
+  .btn-primary,
+  .btn-secondary { font-family: 'Montserrat', sans-serif; font-weight: 700; border-radius: 999px; cursor: pointer; transition: transform 0.22s ease, box-shadow 0.22s ease; }
+  .btn-primary { background: linear-gradient(135deg, var(--gold), #f1ce55); color: #111; border: none; padding: 16px 44px; box-shadow: 0 16px 35px rgba(212,175,55,0.26); }
+  .btn-secondary { background: rgba(255,255,255,0.06); color: var(--gold); border: 1px solid var(--gold); padding: 15px 34px; }
+  .btn-primary:hover, .btn-secondary:hover { transform: translateY(-2px); }
 
-    .badge {
-      display: inline-block;
-      font-size: 0.74rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--emerald);
-      border: 1px solid #b7dccc;
-      background: #eff8f4;
-      border-radius: 999px;
-      padding: 6px 12px;
-      margin-bottom: 12px;
-      font-weight: 700;
-    }
+  .input-group { width: 100%; margin-bottom: 26px; }
+  .input-label { display: block; font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+  .input-field { width: 100%; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: var(--cream); padding: 16px 18px; font-size: 1.05rem; outline: none; transition: border-color 0.3s ease, box-shadow 0.3s ease; }
+  .input-field:focus { border-color: var(--gold); box-shadow: 0 0 20px rgba(212,175,55,0.16); }
+  .input-field::placeholder { color: rgba(255,255,255,0.35); }
 
-    .title {
-      margin: 0 0 10px;
-      font-size: clamp(1.6rem, 5vw, 2.9rem);
-      line-height: 1.14;
-      font-weight: 800;
-      font-family: Georgia, "Times New Roman", serif;
-      color: #174634;
-      text-wrap: balance;
-    }
+  .progress-wrap { width: 100%; height: 10px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+  .progress-fill { width: 0; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--blue), var(--gold)); box-shadow: 0 0 22px rgba(110,168,255,0.35); transition: width 0.75s cubic-bezier(0.22,1,0.36,1); }
 
-    .subtitle {
-      margin: 0 0 20px;
-      color: var(--muted);
-      line-height: 1.7;
-      max-width: 65ch;
-    }
+  .question-counter { font-size: 0.76rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); text-align: center; margin-bottom: 8px; }
+  .question-tag { color: #91c9ff; font-size: 0.82rem; letter-spacing: 0.16em; text-transform: uppercase; text-align: center; margin-bottom: 16px; }
+  .question-text { font-family: 'Playfair Display', serif; font-size: clamp(1.2rem, 3vw, 1.6rem); line-height: 1.7; text-align: center; color: var(--muted-strong); margin-bottom: 26px; }
 
-    .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .options-grid { display: grid; gap: 14px; width: 100%; }
+  .option-btn { display: flex; align-items: center; gap: 16px; width: 100%; padding: 18px 22px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.04); color: var(--cream); text-align: left; cursor: pointer; transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease; position: relative; overflow: hidden; }
+  .option-btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(110,168,255,0.14), transparent); opacity: 0; transition: opacity 0.25s ease; }
+  .option-btn:hover:not(:disabled) { transform: translateX(3px); border-color: rgba(110,168,255,0.35); box-shadow: 0 0 18px rgba(110,168,255,0.12); }
+  .option-btn:hover:not(:disabled)::before { opacity: 1; }
+  .option-letter { width: 34px; height: 34px; min-width: 34px; border-radius: 50%; background: rgba(110,168,255,0.16); border: 1px solid rgba(110,168,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700; color: #91c9ff; transition: background 0.25s ease, color 0.25s ease; }
 
-    .input {
-      flex: 1 1 260px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 12px 13px;
-      font-size: 0.98rem;
-      color: var(--text);
-      background: #fff;
-      transition: border-color 180ms ease, box-shadow 180ms ease;
-    }
-    .input:focus {
-      outline: none;
-      border-color: #8dcab4;
-      box-shadow: 0 0 0 3px rgba(46, 160, 125, 0.2);
-    }
+  .option-btn.correct { background: rgba(56,189,248,0.14); border-color: rgba(56,189,248,0.5); }
+  .option-btn.correct .option-letter { background: rgba(56,189,248,0.3); color: #38bdf8; border-color: #38bdf8; }
+  .option-btn.wrong { background: rgba(248,113,113,0.14); border-color: rgba(248,113,113,0.5); }
+  .option-btn.wrong .option-letter { background: rgba(248,113,113,0.22); color: #f87171; border-color: #f87171; }
+  .option-btn:disabled { cursor: not-allowed; opacity: 0.9; }
 
-    .btn {
-      border: none;
-      border-radius: 12px;
-      padding: 12px 18px;
-      cursor: pointer;
-      background: linear-gradient(180deg, var(--emerald-soft), var(--emerald));
-      color: #fff;
-      font-weight: 700;
-      transition: transform 140ms ease, box-shadow 200ms ease, filter 160ms ease;
-      box-shadow: 0 8px 18px rgba(15, 122, 90, 0.24);
-      position: relative;
-      overflow: hidden;
-    }
-    .btn:hover, .btn:focus-visible {
-      transform: translateY(-1px);
-      filter: brightness(1.03);
-      outline: none;
-    }
-    .btn.alt {
-      background: #fff;
-      color: var(--emerald);
-      border: 1px solid #b7dccc;
-      box-shadow: none;
-    }
+  .vote-reveal { display: none; margin-top: 24px; padding: 22px; border-radius: 22px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); gap: 16px; }
+  .vote-title { font-size: 1rem; font-weight: 700; color: var(--gold); text-align: center; }
+  .vote-row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; margin-bottom: 12px; }
+  .vote-row:last-child { margin-bottom: 0; }
+  .vote-row.highlight .vote-fill { box-shadow: 0 0 18px rgba(212,175,55,0.28); }
+  .vote-label { color: var(--muted-strong); font-size: 0.95rem; }
+  .vote-percentage { color: var(--muted); font-size: 0.95rem; white-space: nowrap; }
+  .vote-meter { position: relative; width: 100%; height: 12px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; }
+  .vote-fill { width: 0; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--blue), var(--gold)); transition: width 1s ease; }
 
-    .top {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
-    .timer {
-      font-weight: 700;
-      color: #1f6a4f;
-      transition: color 180ms ease, transform 180ms ease;
-    }
-    .timer.warning {
-      color: #b06a1c;
-      transform: scale(1.04);
-    }
-    .timer.danger {
-      color: #b73f3f;
-      animation: timerPulse 600ms ease infinite;
-    }
-    .progress-wrap {
-      height: 8px;
-      background: #e8f1ec;
-      border-radius: 999px;
-      overflow: hidden;
-      margin: 12px 0 16px;
-    }
-    .progress {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--emerald), var(--gold));
-      transition: width 280ms ease;
-      position: relative;
-    }
-    .progress::after {
-      content: "";
-      position: absolute;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      width: 24px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55));
-    }
+  .live-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+  .live-score { padding: 10px 18px; border-radius: 999px; border: 1px solid rgba(212,175,55,0.18); color: var(--gold); letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.82rem; }
+  .hint-text { color: var(--muted); font-size: 0.92rem; text-align: right; flex: 1; }
 
-    .topic {
-      display: inline-block;
-      margin-bottom: 10px;
-      font-size: 0.8rem;
-      color: var(--emerald);
-      border: 1px solid #cfe6dc;
-      border-radius: 999px;
-      padding: 5px 11px;
-      background: #f2faf6;
-    }
-    .question {
-      margin: 0 0 14px;
-      font-size: clamp(1.07rem, 2.8vw, 1.34rem);
-      line-height: 1.56;
-      font-weight: 700;
-      animation: fadeSlide 260ms ease both;
-    }
-    .options { display: grid; gap: 11px; }
-    .option {
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      background: #fff;
-      color: var(--text);
-      padding: 12px 13px;
-      text-align: left;
-      cursor: pointer;
-      font-size: 0.95rem;
-      transition: border-color .15s ease, transform .14s ease, box-shadow .15s ease;
-      animation: fadeSlide 320ms ease both;
-    }
-    .option:hover:not(:disabled), .option:focus-visible:not(:disabled) {
-      border-color: #90cab4;
-      transform: translateX(2px);
-      box-shadow: 0 8px 16px rgba(15, 122, 90, 0.08);
-      outline: none;
-    }
-    .option.correct { background: var(--ok); border-color: #96d3b3; }
-    .option.wrong { background: var(--bad); border-color: #e9a8a8; }
-    .option.correct { animation: pop 320ms ease; }
-    .option.wrong { animation: shake 320ms ease; }
-    .feedback {
-      min-height: 24px;
-      margin-top: 12px;
-      color: #2f6852;
-      font-size: 0.92rem;
-      opacity: 0;
-      transform: translateY(3px);
-      transition: opacity .2s ease, transform .2s ease;
-    }
-    .feedback.show { opacity: 1; transform: translateY(0); }
+  .score-ring {
+    width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(var(--gold) var(--pct, 0%), rgba(255,255,255,0.05) 0%); display: flex; align-items: center; justify-content: center; margin: 24px auto 12px; box-shadow: 0 0 42px rgba(212,175,55,0.18); position: relative;
+  }
+  .score-ring::before { content: ''; position: absolute; inset: 10px; border-radius: 50%; background: rgba(12,16,35,0.98); }
+  .score-inner { position: relative; z-index: 1; text-align: center; }
+  .score-number { font-family: 'Playfair Display', serif; font-size: 2.4rem; font-weight: 800; color: var(--gold-light); }
+  .score-label { font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+  .result-msg { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.18rem; color: #91c9ff; text-align: center; margin: 8px 0 20px; }
 
-    .score {
-      font-size: clamp(1.9rem, 5vw, 2.6rem);
-      color: #1b5c44;
-      font-weight: 800;
-      margin: 6px 0 10px;
-      animation: pulse 1.2s ease infinite;
-    }
+  .lb-header,
+  .lb-row { display: grid; grid-template-columns: 48px 1fr 80px; gap: 14px; align-items: center; }
+  .lb-header { padding: 12px 0 12px 0; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 10px; }
+  .lb-row { padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .lb-row.top-1 { background: rgba(212,175,55,0.12); }
+  .lb-row.top-2 { background: rgba(170,170,170,0.1); }
+  .lb-row.top-3 { background: rgba(205,127,50,0.1); }
+  .lb-rank { font-family: 'Playfair Display', serif; font-size: 1.1rem; }
+  .lb-name { font-size: 0.96rem; color: var(--muted-strong); font-weight: 600; }
+  .lb-score-val { text-align: right; font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--gold-light); }
+  .lb-score-pts { display: block; font-size: 0.62rem; color: var(--muted); letter-spacing: 0.12em; }
+  .empty-board { padding: 36px 0; text-align: center; color: var(--muted); font-style: italic; }
 
-    .leaderboard {
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      overflow: hidden;
-      background: #fff;
-    }
-    .lb-head {
-      display: flex;
-      justify-content: space-between;
-      padding: 11px 13px;
-      border-bottom: 1px solid #edf4f0;
-      color: var(--emerald);
-      font-size: 0.86rem;
-      font-weight: 700;
-    }
-    .lb-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      max-height: 260px;
-      overflow: auto;
-    }
-    .lb-row {
-      display: grid;
-      grid-template-columns: 38px 1fr auto;
-      gap: 10px;
-      padding: 10px 13px;
-      border-bottom: 1px solid #f1f5f3;
-      font-size: 0.92rem;
-      animation: fadeSlide 300ms ease both;
-    }
-    .lb-row:last-child { border-bottom: none; }
-    .empty { padding: 13px; color: var(--muted); font-size: 0.9rem; }
+  #toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(80px); background: rgba(12,16,35,0.96); color: var(--cream); border-radius: 999px; padding: 14px 26px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 18px 40px rgba(0,0,0,0.35); opacity: 0; transition: opacity 0.35s ease, transform 0.35s ease; z-index: 100; pointer-events: none; }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    .ripple {
-      position: absolute;
-      border-radius: 50%;
-      transform: scale(0);
-      animation: ripple 520ms linear;
-      background: rgba(0, 0, 0, 0.62);
-      pointer-events: none;
-    }
+  .brand { margin-top: 28px; color: rgba(255,255,255,0.22); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; text-align: center; }
 
-    .burst {
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: rgba(201, 167, 95, 0.75);
-      box-shadow: 0 0 14px rgba(15, 122, 90, 0.35);
-      animation: burst 780ms ease-out forwards;
-      pointer-events: none;
-      z-index: 5;
-    }
-
-    @keyframes reveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes fadeSlide { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes drift { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-18px); } }
-    @keyframes ripple { to { transform: scale(4); opacity: 0; } }
-    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
-    @keyframes pop { 0% { transform: scale(0.98); } 55% { transform: scale(1.03); } 100% { transform: scale(1); } }
-    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
-    @keyframes burst { from { transform: translate(0, 0) scale(1); opacity: 1; } to { transform: translate(var(--x), var(--y)) scale(0.1); opacity: 0; } }
-    @keyframes timerPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 1ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 1ms !important;
-      }
-    }
-  </style>
+  @media (max-width: 620px) {
+    .card { padding: 28px 20px; }
+    .question-text { font-size: 1.25rem; }
+    .live-row { flex-direction: column; align-items: stretch; text-align: center; }
+    .hint-text { text-align: center; }
+    .lb-header, .lb-row { grid-template-columns: 40px 1fr 60px; }
+  }
+</style>
 </head>
 <body>
-  <div class="noise" aria-hidden="true"></div>
-  <canvas id="particles" aria-hidden="true"></canvas>
-  <div class="float-orb orb-1" aria-hidden="true"></div>
-  <div class="float-orb orb-2" aria-hidden="true"></div>
-  <main class="page">
-    <section class="card" aria-live="polite">
-      <div id="introScreen" class="screen active">
-        <span class="badge">Islamic Memorization Quiz - Level 2</span>
-        <h1 class="title">Qur'an Hifz Challenge (Level 2)</h1>
-        <p class="subtitle">15 advanced hifz questions with a timer per question. Level 2 focuses on recall speed and precision under pressure.</p>
-        <div class="row">
-          <input id="playerName" class="input" type="text" maxlength="28" placeholder="Enter your name">
-          <button id="startBtn" class="btn" type="button">Start Quiz</button>
+
+<canvas id="sparkle-canvas"></canvas>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+<div id="confetti-layer"></div>
+
+<div id="app">
+  <div class="screen active" id="screen-intro">
+    <div class="card" style="text-align:center;padding-top:56px;padding-bottom:56px;">
+      <div style="font-size:3.4rem;margin-bottom:14px;">🎓</div>
+      <h1 class="display-title">Class of 2026</h1>
+      <div class="subtitle">A graduation quiz that blends memory, emotion, and class consensus.</div>
+      <div class="ornament">✦</div>
+      <p style="color: rgba(255,255,255,0.76); font-size: 1rem; line-height: 1.8; margin-bottom: 30px;">
+        Step into the moment: answer objective memories, discover class opinions, and celebrate the journey together.
+      </p>
+      <button class="btn-primary" onclick="showScreen('screen-name')">Start the Quiz</button>
+    </div>
+    <div class="brand">An immersive graduation experience in a single page.</div>
+  </div>
+
+  <div class="screen" id="screen-name">
+    <div class="card">
+      <div style="font-size:2rem;text-align:center;margin-bottom:16px;">✨</div>
+      <h2 class="section-title">Your name?</h2>
+      <div class="subtitle">We’ll save your score to the class leaderboard.</div>
+      <div class="ornament"></div>
+      <div class="input-group">
+        <label class="input-label" for="player-name">Player name</label>
+        <input id="player-name" class="input-field" type="text" placeholder="e.g. Maya Carter" maxlength="32" autocomplete="off" />
+      </div>
+      <button class="btn-primary" onclick="startQuiz()" style="width:100%;">Begin</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-quiz">
+    <div class="card">
+      <div class="progress-wrap"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="question-counter" id="q-counter">Question 1 of 13</div>
+      <div class="question-tag" id="q-tag">Objective Question</div>
+      <p class="question-text" id="q-text"></p>
+      <div class="options-grid" id="options-grid"></div>
+      <div class="vote-reveal" id="vote-reveal">
+        <div class="vote-title" id="vote-title">The class voted...</div>
+        <div id="vote-bars"></div>
+        <p class="hint-text" id="vote-hint">Majority votes earn the class consensus point.</p>
+      </div>
+      <div class="live-row">
+        <span class="live-score" id="live-score">Score: 0</span>
+        <span class="hint-text" id="q-hint">Choose your answer, then watch the reveal.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-result">
+    <div class="card" style="text-align:center;">
+      <div style="font-size:2.7rem;margin-bottom:12px;">🎉</div>
+      <h2 class="section-title">Quiz Complete</h2>
+      <div class="ornament"></div>
+      <div class="score-ring" id="score-ring">
+        <div class="score-inner">
+          <div class="score-number" id="result-num">0</div>
+          <div class="score-label">Points</div>
         </div>
       </div>
-      <div id="quizScreen" class="screen">
-        <div class="top"><span id="progressText">Question 1 / 15</span><span id="scoreText">Score: 0</span><span id="timerText" class="timer">20s</span></div>
-        <div class="progress-wrap"><div id="progressBar" class="progress"></div></div>
-        <span id="topicTag" class="topic">Hifz Detail</span>
-        <h2 id="questionText" class="question"></h2>
-        <div id="options" class="options"></div>
-        <div id="feedback" class="feedback"></div>
+      <p class="result-msg" id="result-msg">You honored the memories and matched the class spirit.</p>
+      <p id="result-name" style="font-size:0.95rem;color:var(--muted);margin-bottom:26px;"></p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+        <button class="btn-primary" onclick="showLeaderboard()">View Leaderboard</button>
+        <button class="btn-secondary btn-primary" onclick="restartQuiz()" style="background:transparent;color:var(--gold);">Play Again</button>
       </div>
-      <div id="resultScreen" class="screen">
-        <span class="badge">Result</span>
-        <h2 class="title">Quiz Complete</h2>
-        <div id="scoreValue" class="score">0 / 15</div>
-        <p id="resultMessage" class="subtitle"></p>
-        <div class="leaderboard">
-          <div class="lb-head"><span>Leaderboard</span><span>Highest Score First</span></div>
-          <ul id="leaderboardList" class="lb-list"></ul>
-          <div id="leaderboardEmpty" class="empty">No scores yet.</div>
-        </div>
-        <div class="row" style="margin-top:14px;">
-          <button id="downloadBtn" class="btn alt" type="button">Download Leaderboard</button>
-          <button id="againBtn" class="btn" type="button">Play Again</button>
-        </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-lb">
+    <div class="card">
+      <div style="font-size:2rem;text-align:center;margin-bottom:10px;">🏆</div>
+      <h2 class="section-title">Class Leaderboard</h2>
+      <div class="subtitle">See how your score compares with other graduates.</div>
+      <div class="ornament"></div>
+      <div class="lb-header">
+        <span>#</span>
+        <span>Player</span>
+        <span style="text-align:right;">Score</span>
       </div>
-    </section>
-  </main>
-  <script>
-    const STORAGE_KEY = "quran_hifz_leaderboard_v1";
-    const QUESTIONS = [
-      { topic: "Juz Order", question: "In which juz does Surah Al-Mujadilah begin?", options: ["Juz 26", "Juz 27", "Juz 28", "Juz 29"], correctIndex: 2 },
-      { topic: "Ayah Number", question: "Which surah contains exactly 11 ayat?", options: ["Al-Asr", "Al-Jumu'ah", "Al-Munafiqun", "At-Taghabun"], correctIndex: 2 },
-      { topic: "Mutashabihat", question: "Which pair of surahs both open with \"Alif Lam Mim\"?", options: ["Yunus & Hud", "Al-Baqarah & Aal Imran", "Ar-Ra'd & Ibrahim", "Maryam & Taha"], correctIndex: 1 },
-      { topic: "Makki/Madani", question: "Which surah is Madani among these?", options: ["Al-Ankabut", "Yusuf", "Ar-Rahman", "Al-Bayyinah"], correctIndex: 3 },
-      { topic: "Sequence", question: "Which surah comes immediately after Surah Al-Qiyamah?", options: ["Al-Insan", "Al-Mursalat", "An-Naba", "Al-Muddaththir"], correctIndex: 0 },
-      { topic: "Name Mention", question: "How many times is the name 'Maryam' mentioned in Surah Maryam?", options: ["25", "31", "34", "37"], correctIndex: 2 },
-      { topic: "Unique Phrase", question: "In which surah does \"فَبِأَيِّ آلَاءِ رَبِّكُمَا تُكَذِّبَانِ\" repeat?", options: ["Ar-Rahman", "Al-Waqi'ah", "Al-Hadid", "Al-Hashr"], correctIndex: 0 },
-      { topic: "Juz Boundary", question: "Juz 30 begins in which surah?", options: ["An-Naba", "Al-Mursalat", "An-Nazi'at", "Abasa"], correctIndex: 1 },
-      { topic: "Ruku Detail", question: "Which surah has no letter 'meem' in its name?", options: ["Hud", "Qaf", "Nuh", "Yasin"], correctIndex: 0 },
-      { topic: "Ayat Count", question: "How many ayat are in Surah Al-Mulk?", options: ["28", "29", "30", "31"], correctIndex: 2 },
-      { topic: "Order", question: "Which surah directly precedes Surah Al-Kahf in the mushaf?", options: ["Al-Isra", "Maryam", "Taha", "Yusuf"], correctIndex: 0 },
-      { topic: "Wording", question: "Which surah starts with \"تَبَارَكَ\"?", options: ["Al-Mulk", "Al-Furqan", "Both A and B", "Neither"], correctIndex: 2 },
-      { topic: "Endings", question: "Which surah ends with \"مِنَ الْجِنَّةِ وَالنَّاسِ\"?", options: ["Al-Ikhlas", "Al-Falaq", "An-Nas", "Al-Baqarah"], correctIndex: 2 },
-      { topic: "Placement", question: "Surah Al-Hadid is located in which juz?", options: ["Juz 26", "Juz 27", "Juz 28", "Juz 29"], correctIndex: 1 },
-      { topic: "Memorization", question: "Which surah is known as the 'heart of the Qur'an' in common narration usage?", options: ["Yasin", "Ar-Rahman", "Al-Waqi'ah", "Al-Mulk"], correctIndex: 0 }
-    ];
+      <div id="lb-list"></div>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;justify-content:center;">
+      <button class="btn-primary" onclick="showScreen('screen-intro')">Home</button>
+      <button class="btn-secondary btn-primary" onclick="restartQuiz()" style="background:transparent;color:var(--gold);">Play Again</button>
+    </div>
+  </div>
+</div>
 
-    const QUESTION_TIME = 20;
-    const state = { index: 0, score: 0, locked: false, player: "", questions: [], leaderboard: [], timeLeft: QUESTION_TIME, timerId: null };
-    const ui = {
-      intro: document.getElementById("introScreen"), quiz: document.getElementById("quizScreen"), result: document.getElementById("resultScreen"),
-      playerName: document.getElementById("playerName"), startBtn: document.getElementById("startBtn"),
-      progressText: document.getElementById("progressText"), scoreText: document.getElementById("scoreText"), progressBar: document.getElementById("progressBar"),
-      timerText: document.getElementById("timerText"),
-      topicTag: document.getElementById("topicTag"), questionText: document.getElementById("questionText"), options: document.getElementById("options"), feedback: document.getElementById("feedback"),
-      scoreValue: document.getElementById("scoreValue"), resultMessage: document.getElementById("resultMessage"),
-      leaderboardList: document.getElementById("leaderboardList"), leaderboardEmpty: document.getElementById("leaderboardEmpty"),
-      downloadBtn: document.getElementById("downloadBtn"), againBtn: document.getElementById("againBtn"),
-      card: document.querySelector(".card"), particles: document.getElementById("particles")
-    };
+<div id="toast"></div>
 
-    function setScreen(screen) {
-      [ui.intro, ui.quiz, ui.result].forEach((el) => el.classList.remove("active"));
-      screen.classList.add("active");
+<script>
+const QUESTIONS = [
+  { q: 'Who was the Class of 2026\'s homeroom teacher in freshman year?', type: 'objective', options: ['Ms. Rivera', 'Mr. Chen', 'Mrs. Patel', 'Dr. Thompson'], answer: 1 },
+  { q: 'Who did the class vote as the most likely to become a famous actor?', type: 'subjective', options: ['Alex', 'Jordan', 'Taylor', 'Riley'], votes: [25, 35, 20, 20] },
+  { q: 'Which teacher was known for their epic science experiments?', type: 'objective', options: ['Mr. Garcia', 'Ms. Lee', 'Mr. Johnson', 'Mrs. Kim'], answer: 0 },
+  { q: 'Which student was voted the best dancer at prom?', type: 'subjective', options: ['Casey', 'Morgan', 'Jamie', 'Avery'], votes: [15, 40, 25, 20] },
+  { q: 'What was the nickname of the math teacher who always wore bow ties?', type: 'objective', options: ['Bow Tie Bob', 'Tie Guy Tim', 'Knot Master Ken', 'Ribbon Ron'], answer: 0 },
+  { q: 'Who did the class agree was the most likely to invent something cool?', type: 'subjective', options: ['Sam', 'Dev', 'Luna', 'Kai'], votes: [30, 20, 35, 15] },
+  { q: 'Which student organized the most class fundraisers?', type: 'objective', options: ['Emma', 'Liam', 'Sophia', 'Noah'], answer: 2 },
+  { q: 'Which teacher\'s class had the best field trips?', type: 'subjective', options: ['History with Mr. Blake', 'Art with Ms. Torres', 'PE with Coach Reed', 'Music with Mrs. Singh'], votes: [28, 22, 30, 20] },
+  { q: 'Who was the student council president for two years?', type: 'objective', options: ['Zara', 'Ethan', 'Mia', 'Lucas'], answer: 3 },
+  { q: 'Who did the class vote as the funniest person in the class?', type: 'subjective', options: ['Charlie', 'Harper', 'Drew', 'Skyler'], votes: [18, 42, 22, 18] },
+  { q: 'Which teacher inspired the most students to pursue STEM?', type: 'objective', options: ['Ms. Alvarez', 'Mr. Wong', 'Mrs. Foster', 'Dr. Hayes'], answer: 1 },
+  { q: 'Which student was known for their amazing baking at bake sales?', type: 'subjective', options: ['Bella', 'Finn', 'Grace', 'Hunter'], votes: [35, 15, 30, 20] },
+  { q: 'Who was the class valedictorian?', type: 'objective', options: ['Olivia', 'Mason', 'Isabella', 'Jackson'], answer: 0 }
+];
+
+let currentQ = 0;
+let score = 0;
+let playerName = '';
+let answered = false;
+let leaderboard = JSON.parse(localStorage.getItem('gradQuizLeaderboard') || '[]');
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(screen => {
+    screen.classList.remove('active');
+    screen.style.display = 'none';
+  });
+  const target = document.getElementById(id);
+  target.style.display = 'flex';
+  void target.offsetWidth;
+  target.classList.add('active');
+}
+
+function startQuiz() {
+  const input = document.getElementById('player-name');
+  playerName = input.value.trim();
+  if (!playerName) {
+    showToast('Please enter your name before we begin.');
+    return;
+  }
+  currentQ = 0;
+  score = 0;
+  answered = false;
+  renderQuestion();
+  showScreen('screen-quiz');
+}
+
+function restartQuiz() {
+  document.getElementById('player-name').value = '';
+  showScreen('screen-name');
+}
+
+function renderQuestion() {
+  const question = QUESTIONS[currentQ];
+  const total = QUESTIONS.length;
+  document.getElementById('progress-fill').style.width = `${Math.round((currentQ / total) * 100)}%`;
+  document.getElementById('q-counter').textContent = `Question ${currentQ + 1} of ${total}`;
+  document.getElementById('q-tag').textContent = question.type === 'objective' ? 'Objective Question' : 'Class Vote Question';
+  document.getElementById('q-text').textContent = question.q;
+  document.getElementById('live-score').textContent = `Score: ${score}`;
+  document.getElementById('q-hint').textContent = question.type === 'subjective' ? 'Pick the option you think the class chose.' : 'Choose the answer that remembers the moment.';
+
+  const grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+
+  question.options.forEach((option, idx) => {
+    const button = document.createElement('button');
+    button.className = 'option-btn';
+    button.innerHTML = `
+      <span class="option-letter">${letters[idx]}</span>
+      <span>${option}</span>
+    `;
+    button.addEventListener('click', () => selectAnswer(idx, button));
+    button.style.animation = 'fadeUp 0.45s cubic-bezier(0.22,1,0.36,1) both';
+    button.style.animationDelay = `${idx * 0.07}s`;
+    grid.appendChild(button);
+  });
+
+  const voteReveal = document.getElementById('vote-reveal');
+  voteReveal.style.display = 'none';
+  document.getElementById('vote-bars').innerHTML = '';
+  answered = false;
+}
+
+function selectAnswer(index, button) {
+  if (answered) return;
+  answered = true;
+  const question = QUESTIONS[currentQ];
+  const buttons = Array.from(document.querySelectorAll('.option-btn'));
+  buttons.forEach(btn => btn.disabled = true);
+
+  if (question.type === 'objective') {
+    const correctIndex = question.answer;
+    if (index === correctIndex) {
+      button.classList.add('correct');
+      score += 1;
+      showToast('✅ Correct — you remembered it!');
+    } else {
+      button.classList.add('wrong');
+      buttons[correctIndex].classList.add('correct');
+      showToast('❌ Not quite — try the next one.');
     }
+    document.getElementById('live-score').textContent = `Score: ${score}`;
+    setTimeout(nextQuestion, 1500);
+    return;
+  }
 
-    function shuffle(a) {
-      const x = [...a];
-      for (let i = x.length - 1; i > 0; i -= 1) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [x[i], x[j]] = [x[j], x[i]];
-      }
-      return x;
+  revealVoteResults(question, index);
+}
+
+function revealVoteResults(question, selectedIndex) {
+  const voteReveal = document.getElementById('vote-reveal');
+  const bars = document.getElementById('vote-bars');
+  const total = question.votes.reduce((sum, value) => sum + value, 0);
+  const highest = Math.max(...question.votes);
+  const majority = question.votes.indexOf(highest);
+
+  bars.innerHTML = question.options.map((option, idx) => {
+    const percent = Math.round((question.votes[idx] / total) * 100);
+    const highlight = idx === majority ? 'highlight' : '';
+    return `
+      <div class="vote-row ${highlight}">
+        <span class="vote-label">${option}</span>
+        <span class="vote-percentage">${percent}%</span>
+        <div class="vote-meter"><div class="vote-fill" style="width: 0;" data-width="${percent}%"></div></div>
+      </div>
+    `;
+  }).join('');
+
+  voteReveal.style.display = 'grid';
+  document.getElementById('vote-title').textContent = 'The class voted...';
+  document.getElementById('vote-hint').textContent = 'Majority pick earns a consensus point.';
+
+  if (selectedIndex === majority) {
+    score += 1;
+    showToast('✨ Nice! You matched the class consensus.');
+  } else {
+    showToast('👀 The class had a different favorite.');
+  }
+  document.getElementById('live-score').textContent = `Score: ${score}`;
+
+  setTimeout(() => {
+    document.querySelectorAll('.vote-fill').forEach(fill => {
+      fill.style.width = fill.dataset.width;
+    });
+  }, 80);
+
+  setTimeout(nextQuestion, 2400);
+}
+
+function nextQuestion() {
+  currentQ += 1;
+  if (currentQ < QUESTIONS.length) {
+    renderQuestion();
+  } else {
+    finishQuiz();
+  }
+}
+
+function finishQuiz() {
+  const maxScore = QUESTIONS.length;
+  leaderboard.push({ name: playerName, score, created: Date.now() });
+  leaderboard.sort((a, b) => b.score - a.score || a.created - b.created);
+  localStorage.setItem('gradQuizLeaderboard', JSON.stringify(leaderboard.slice(0, 20)));
+
+  const ring = document.getElementById('score-ring');
+  ring.style.setProperty('--pct', `${Math.round((score / maxScore) * 360)}deg`);
+  document.getElementById('result-num').textContent = score;
+  document.getElementById('result-name').textContent = `Well done, ${playerName}!`;
+
+  let message = 'A meaningful finish to a memorable class journey.';
+  if (score === maxScore) message = 'Perfect score! You are the class memory champion.';
+  else if (score >= maxScore * 0.85) message = 'Amazing — you truly captured the class spirit.';
+  else if (score >= maxScore * 0.65) message = 'Great job! You know the stories well.';
+  else if (score >= maxScore * 0.45) message = 'Solid effort — the journey is still fresh in heart.';
+  else message = 'Fun run! Share the quiz and compare with friends.';
+
+  document.getElementById('result-msg').textContent = message;
+  launchConfetti();
+  showScreen('screen-result');
+}
+
+function showLeaderboard() {
+  const list = document.getElementById('lb-list');
+  list.innerHTML = '';
+  if (!leaderboard.length) {
+    list.innerHTML = '<div class="empty-board">No scores yet — be the first to set the record.</div>';
+    showScreen('screen-lb');
+    return;
+  }
+
+  leaderboard.slice(0, 12).forEach((entry, idx) => {
+    const row = document.createElement('div');
+    const rankClass = idx === 0 ? 'top-1' : idx === 1 ? 'top-2' : idx === 2 ? 'top-3' : '';
+    const label = idx === 0 ? '👑' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `<span>${idx + 1}</span>`;
+    row.className = `lb-row ${rankClass}`;
+    row.innerHTML = `
+      <span class="lb-rank">${label}</span>
+      <span class="lb-name">${escapeHtml(entry.name)}</span>
+      <span class="lb-score-val">${entry.score}<span class="lb-score-pts">pts</span></span>
+    `;
+    list.appendChild(row);
+  });
+  showScreen('screen-lb');
+}
+
+function escapeHtml(text) {
+  return text.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
+}
+
+let toastTimeout;
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => toast.classList.remove('show'), 2400);
+}
+
+function launchConfetti() {
+  const layer = document.getElementById('confetti-layer');
+  const colors = ['#d4af37', '#7dc1ff', '#ffffff', '#93c0ff', '#f5e07a'];
+  for (let i = 0; i < 70; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    const size = Math.random() * 6 + 4;
+    piece.style.left = `${Math.random() * 100}%`;
+    piece.style.width = `${size}px`;
+    piece.style.height = `${size}px`;
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDuration = `${Math.random() * 1.8 + 1.8}s`;
+    piece.style.animationDelay = `${Math.random() * 0.6}s`;
+    piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+    layer.appendChild(piece);
+    piece.addEventListener('animationend', () => piece.remove());
+  }
+}
+
+(function createSparkles() {
+  const canvas = document.getElementById('sparkle-canvas');
+  const ctx = canvas.getContext('2d');
+  let width = window.innerWidth;
+  let height = window.innerHeight;
+  const sparks = [];
+
+  function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
+  window.addEventListener('resize', resize);
+  resize();
+
+  class Spark {
+    constructor() { this.reset(); }
+    reset() {
+      this.x = Math.random() * width;
+      this.y = Math.random() * height;
+      this.radius = Math.random() * 1.4 + 0.6;
+      this.vx = (Math.random() - 0.5) * 0.3;
+      this.vy = (Math.random() - 0.5) * 0.3;
+      this.alpha = Math.random() * 0.5 + 0.1;
+      this.life = 0;
+      this.maxLife = Math.random() * 240 + 120;
     }
-
-    function prepareQuestion(q) {
-      const idx = q.options.map((t, i) => ({ t, i }));
-      const mixed = shuffle(idx);
-      return { ...q, options: mixed.map((m) => m.t), correctIndex: mixed.findIndex((m) => m.i === q.correctIndex) };
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.life += 1;
+      if (this.x < -20 || this.x > width + 20 || this.y < -20 || this.y > height + 20 || this.life > this.maxLife) this.reset();
     }
-
-    function ripple(event) {
-      const button = event.currentTarget;
-      const rect = button.getBoundingClientRect();
-      const dot = document.createElement("span");
-      const size = Math.max(rect.width, rect.height);
-      dot.className = "ripple";
-      dot.style.width = `${size}px`;
-      dot.style.height = `${size}px`;
-      dot.style.left = `${event.clientX - rect.left - size / 2}px`;
-      dot.style.top = `${event.clientY - rect.top - size / 2}px`;
-      button.appendChild(dot);
-      setTimeout(() => dot.remove(), 520);
+    draw() {
+      const progress = this.life < 40 ? this.life / 40 : this.life > this.maxLife - 40 ? (this.maxLife - this.life) / 40 : 1;
+      ctx.globalAlpha = this.alpha * progress;
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fill();
     }
+  }
 
-    function burst(x, y, count = 12) {
-      for (let i = 0; i < count; i += 1) {
-        const el = document.createElement("span");
-        el.className = "burst";
-        const angle = (Math.PI * 2 * i) / count;
-        const dist = 34 + Math.random() * 34;
-        el.style.left = `${x}px`;
-        el.style.top = `${y}px`;
-        el.style.setProperty("--x", `${Math.cos(angle) * dist}px`);
-        el.style.setProperty("--y", `${Math.sin(angle) * dist}px`);
-        ui.card.appendChild(el);
-        setTimeout(() => el.remove(), 790);
-      }
-    }
-
-    function initParticles() {
-      const canvas = ui.particles;
-      const ctx = canvas.getContext("2d");
-      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      let dots = [];
-      function resize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        const count = Math.min(90, Math.round((canvas.width * canvas.height) / 16000));
-        dots = Array.from({ length: count }, () => ({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          r: 0.6 + Math.random() * 1.5,
-          o: 0.2 + Math.random() * 0.35,
-          dx: (Math.random() - 0.5) * 0.16,
-          dy: (Math.random() - 0.5) * 0.16
-        }));
-      }
-      function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        dots.forEach((d) => {
-          d.x += d.dx; d.y += d.dy;
-          if (d.x < 0) d.x = canvas.width;
-          if (d.x > canvas.width) d.x = 0;
-          if (d.y < 0) d.y = canvas.height;
-          if (d.y > canvas.height) d.y = 0;
-          ctx.fillStyle = `rgba(15,122,90,${d.o})`;
-          ctx.beginPath();
-          ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-          ctx.fill();
-        });
-        if (!reduced) requestAnimationFrame(draw);
-      }
-      resize();
-      draw();
-      window.addEventListener("resize", resize);
-    }
-
-    function loadLeaderboard() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        const parsed = raw ? JSON.parse(raw) : [];
-        state.leaderboard = Array.isArray(parsed) ? parsed : [];
-      } catch { state.leaderboard = []; }
-    }
-
-    function saveLeaderboard() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.leaderboard));
-    }
-
-    function renderLeaderboard() {
-      ui.leaderboardList.innerHTML = "";
-      if (!state.leaderboard.length) {
-        ui.leaderboardEmpty.style.display = "block";
-        return;
-      }
-      ui.leaderboardEmpty.style.display = "none";
-      state.leaderboard.forEach((r, i) => {
-        const li = document.createElement("li");
-        li.className = "lb-row";
-        li.innerHTML = `<span>${i + 1}</span><span>${r.name}</span><strong>${r.score}/${r.total}</strong>`;
-        ui.leaderboardList.appendChild(li);
-      });
-    }
-
-    function updateLeaderboard(name, score, total) {
-      state.leaderboard.push({ name, score, total, time: new Date().toISOString() });
-      state.leaderboard.sort((a, b) => (b.score - a.score) || (new Date(b.time) - new Date(a.time)));
-      state.leaderboard = state.leaderboard.slice(0, 40);
-      saveLeaderboard();
-      renderLeaderboard();
-    }
-
-    function downloadLeaderboard() {
-      if (!state.leaderboard.length) return;
-      const lines = ["Rank,Name,Score,Total,Timestamp"];
-      state.leaderboard.forEach((r, i) => lines.push(`${i + 1},"${String(r.name).replaceAll("\"", "\"\"")}",${r.score},${r.total},${r.time}`));
-      const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "quran-hifz-leaderboard.csv";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    }
-
-    function resetQuiz() {
-      state.index = 0;
-      state.score = 0;
-      state.locked = false;
-      state.timeLeft = QUESTION_TIME;
-      if (state.timerId) { clearInterval(state.timerId); state.timerId = null; }
-      state.questions = shuffle(QUESTIONS).map(prepareQuestion);
-      ui.feedback.textContent = "";
-      ui.feedback.classList.remove("show");
-    }
-
-    function updateTimerUI() {
-      ui.timerText.textContent = `${state.timeLeft}s`;
-      ui.timerText.classList.remove("warning", "danger");
-      if (state.timeLeft <= 10 && state.timeLeft > 5) ui.timerText.classList.add("warning");
-      if (state.timeLeft <= 5) ui.timerText.classList.add("danger");
-    }
-
-    function stopTimer() {
-      if (state.timerId) {
-        clearInterval(state.timerId);
-        state.timerId = null;
-      }
-    }
-
-    function startTimer() {
-      stopTimer();
-      state.timeLeft = QUESTION_TIME;
-      updateTimerUI();
-      state.timerId = setInterval(() => {
-        state.timeLeft -= 1;
-        updateTimerUI();
-        if (state.timeLeft <= 0) {
-          stopTimer();
-          handleTimeout();
-        }
-      }, 1000);
-    }
-
-    function startQuiz() {
-      state.player = ui.playerName.value.trim() || "Guest";
-      resetQuiz();
-      setScreen(ui.quiz);
-      renderQuestion();
-    }
-
-    function renderQuestion() {
-      const q = state.questions[state.index];
-      const total = state.questions.length;
-      ui.progressText.textContent = `Question ${state.index + 1} / ${total}`;
-      ui.scoreText.textContent = `Score: ${state.score}`;
-      ui.progressBar.style.width = `${((state.index + 1) / total) * 100}%`;
-      ui.topicTag.textContent = q.topic;
-      ui.questionText.textContent = q.question;
-      ui.options.innerHTML = "";
-      ui.feedback.textContent = "";
-      ui.feedback.classList.remove("show");
-      state.locked = false;
-      startTimer();
-      q.options.forEach((text, i) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "option";
-        btn.textContent = text;
-        btn.style.animationDelay = `${i * 40}ms`;
-        btn.addEventListener("click", () => answer(i));
-        ui.options.appendChild(btn);
-      });
-    }
-
-    function answer(selected) {
-      if (state.locked) return;
-      state.locked = true;
-      stopTimer();
-      const q = state.questions[state.index];
-      const correct = selected === q.correctIndex;
-      const buttons = ui.options.querySelectorAll(".option");
-      buttons.forEach((b, i) => {
-        b.disabled = true;
-        if (i === q.correctIndex) b.classList.add("correct");
-        else if (i === selected) b.classList.add("wrong");
-      });
-      if (correct) {
-        state.score += 1;
-        ui.feedback.textContent = "Correct.";
-        burst(130, 130, 10);
-      } else {
-        ui.feedback.textContent = "Not correct.";
-      }
-      ui.feedback.classList.add("show");
-      ui.scoreText.textContent = `Score: ${state.score}`;
-      setTimeout(() => {
-        state.index += 1;
-        if (state.index >= state.questions.length) showResult();
-        else renderQuestion();
-      }, 900);
-    }
-
-    function handleTimeout() {
-      if (state.locked) return;
-      state.locked = true;
-      const q = state.questions[state.index];
-      const buttons = ui.options.querySelectorAll(".option");
-      buttons.forEach((b, i) => {
-        b.disabled = true;
-        if (i === q.correctIndex) b.classList.add("correct");
-      });
-      ui.feedback.textContent = "Time up.";
-      ui.feedback.classList.add("show");
-      setTimeout(() => {
-        state.index += 1;
-        if (state.index >= state.questions.length) showResult();
-        else renderQuestion();
-      }, 900);
-    }
-
-    function showResult() {
-      stopTimer();
-      setScreen(ui.result);
-      const total = state.questions.length;
-      ui.scoreValue.textContent = `${state.score} / ${total}`;
-      const pct = Math.round((state.score / total) * 100);
-      ui.resultMessage.textContent =
-        pct >= 80 ? `${state.player}, excellent hifz precision.` :
-        pct >= 50 ? `${state.player}, strong memorization performance.` :
-        `${state.player}, keep revising and try again.`;
-      burst(170, 120, 18);
-      updateLeaderboard(state.player, state.score, total);
-    }
-
-    ui.startBtn.addEventListener("click", (e) => { ripple(e); startQuiz(); });
-    ui.againBtn.addEventListener("click", (e) => { ripple(e); setScreen(ui.intro); });
-    ui.downloadBtn.addEventListener("click", (e) => { ripple(e); downloadLeaderboard(); });
-    initParticles();
-    loadLeaderboard();
-    renderLeaderboard();
-  </script>
+  for (let i = 0; i < 100; i++) sparks.push(new Spark());
+  function animate() { ctx.clearRect(0, 0, width, height); sparks.forEach(s => { s.update(); s.draw(); }); requestAnimationFrame(animate); }
+  animate();
+})();
+</script>
 </body>
 </html>
