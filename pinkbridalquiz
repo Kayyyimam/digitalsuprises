@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ahmad & Ameena Bridal Shower Quiz</title>
+  <style>
+    :root { --bg:#050306; --pink:#ff4fb0; --pink-soft:#ff8ccd; --rose:#ff66d6; --text:#ffeaf7; --muted:#c9abc0; --ok:#9ff5bb; --bad:#ffc4d3; }
+    * { box-sizing: border-box; }
+    html, body { margin:0; min-height:100%; font-family:"Poppins","Segoe UI",system-ui,sans-serif; color:var(--text); background:radial-gradient(circle at 15% 10%,rgba(255,79,176,.25),transparent 35%),radial-gradient(circle at 80% 15%,rgba(255,140,205,.16),transparent 30%),radial-gradient(circle at 50% 100%,rgba(255,102,214,.12),transparent 40%),var(--bg); overflow-x:hidden; }
+    body { position: relative; padding: 18px; }
+    .sparkles { position:fixed; inset:0; pointer-events:none; z-index:0; }
+    .sparkle { position:absolute; width:6px; height:6px; border-radius:50%; background:rgba(255,216,239,.9); box-shadow:0 0 14px rgba(255,140,205,.7); animation:twinkle 3s ease-in-out infinite; }
+    .app { position:relative; z-index:2; min-height:calc(100vh - 36px); display:grid; place-items:center; }
+    .card { width:min(860px,95vw); background:linear-gradient(160deg,rgba(19,8,19,.9),rgba(13,8,15,.9)); border:1px solid rgba(255,140,205,.3); border-radius:24px; padding:clamp(18px,3.7vw,36px); box-shadow:0 24px 60px rgba(0,0,0,.6),0 0 34px rgba(255,79,176,.2); overflow:hidden; position:relative; }
+    .card::before { content:""; position:absolute; inset:-1px; border-radius:24px; pointer-events:none; background:linear-gradient(120deg,rgba(255,79,176,.25),transparent 40%,rgba(255,140,205,.18)); }
+    .screen { display:none; animation:in 430ms ease both; }
+    .screen.active { display:block; }
+    .tag { display:inline-block; margin-bottom:12px; padding:6px 12px; border-radius:999px; border:1px solid rgba(255,140,205,.44); color:var(--pink-soft); background:rgba(255,79,176,.13); letter-spacing:.07em; text-transform:uppercase; font-size:.74rem; font-weight:700; }
+    .title { margin:0 0 10px; font-size:clamp(1.6rem,5.8vw,3rem); line-height:1.1; font-weight:800; text-wrap:balance; text-shadow:0 0 22px rgba(255,79,176,.48); }
+    .subtitle { margin:0 0 18px; color:var(--muted); line-height:1.6; font-size:clamp(.95rem,2.6vw,1.06rem); max-width:52ch; }
+    .btn { border:none; border-radius:12px; padding:12px 18px; font-size:.98rem; font-weight:700; cursor:pointer; color:#2b0b22; background:linear-gradient(180deg,#ff9fd7,#ff5cbd); transition:transform 160ms ease,box-shadow 200ms ease,filter 160ms ease; box-shadow:0 0 0 2px rgba(255,140,205,.22),0 10px 20px rgba(255,79,176,.4); position:relative; overflow:hidden; }
+    .btn:hover, .btn:focus-visible { transform:translateY(-1px); filter:brightness(1.05); outline:none; }
+    .btn-secondary { background:rgba(255,255,255,.08); color:var(--text); border:1px solid rgba(255,140,205,.4); box-shadow:none; }
+    .stack { display:flex; gap:10px; flex-wrap:wrap; }
+    .input { flex:1 1 260px; border-radius:12px; border:1px solid rgba(255,140,205,.35); background:rgba(255,140,205,.08); color:var(--text); padding:12px 14px; font-size:.98rem; outline:none; transition:box-shadow 180ms ease,border-color 180ms ease; }
+    .input:focus { border-color:var(--pink); box-shadow:0 0 0 3px rgba(255,79,176,.2); }
+    .top { display:flex; justify-content:space-between; gap:10px; color:var(--muted); font-size:.92rem; margin-bottom:10px; }
+    .progress-wrap { height:8px; border-radius:999px; background:rgba(255,255,255,.1); overflow:hidden; margin-bottom:14px; }
+    .progress { height:100%; width:0%; border-radius:999px; background:linear-gradient(90deg,var(--pink),var(--rose)); transition:width 320ms ease; }
+    .topic { display:inline-block; margin-bottom:8px; padding:5px 10px; border:1px solid rgba(255,140,205,.35); border-radius:999px; color:var(--pink-soft); font-size:.8rem; background:rgba(255,79,176,.1); }
+    .question { margin:0 0 12px; font-size:clamp(1.08rem,2.8vw,1.35rem); line-height:1.45; font-weight:700; }
+    .options { display:grid; gap:10px; }
+    .option { width:100%; text-align:left; border-radius:12px; border:1px solid rgba(255,140,205,.3); background:rgba(255,140,205,.08); color:var(--text); padding:11px 12px; font-size:.95rem; cursor:pointer; transition:transform 130ms ease,border-color 130ms ease; }
+    .option:hover:not(:disabled), .option:focus-visible:not(:disabled) { transform:translateX(2px); border-color:var(--pink); outline:none; }
+    .option.correct { border-color:var(--ok); background:rgba(159,245,187,.15); }
+    .option.wrong { border-color:var(--bad); background:rgba(255,196,211,.16); }
+    .option:disabled { opacity:.96; cursor:not-allowed; }
+    .feedback { min-height:24px; margin-top:10px; color:var(--pink-soft); opacity:0; transform:translateY(2px); transition:opacity 160ms ease,transform 160ms ease; font-size:.94rem; }
+    .feedback.show { opacity:1; transform:translateY(0); }
+    .result-wrap { display:grid; gap:14px; text-align:center; place-items:center; }
+    .score-badge { font-size:2rem; font-weight:800; color:var(--pink-soft); text-shadow:0 0 18px rgba(255,79,176,.5); }
+    .leaderboard { width:100%; border-radius:14px; border:1px solid rgba(255,140,205,.34); background:rgba(255,140,205,.08); overflow:hidden; }
+    .leaderboard-head { display:flex; justify-content:space-between; padding:10px 12px; border-bottom:1px solid rgba(255,140,205,.25); color:var(--pink-soft); font-weight:700; font-size:.88rem; }
+    .leaderboard-list { list-style:none; margin:0; padding:0; max-height:230px; overflow:auto; }
+    .leaderboard-row { display:grid; grid-template-columns:40px 1fr auto; gap:10px; padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.07); align-items:center; font-size:.92rem; }
+    .leaderboard-row:last-child { border-bottom:none; }
+    .rank { color:var(--pink-soft); font-weight:800; }
+    .score { color:var(--pink-soft); font-weight:700; }
+    .empty { padding:12px; color:var(--muted); text-align:left; font-size:.9rem; }
+    .actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+    .ripple { position:absolute; border-radius:50%; transform:scale(0); animation:ripple 520ms linear; background:rgba(255,255,255,.55); pointer-events:none; }
+    @keyframes in { from { opacity:0; transform:translateY(8px) scale(.99); } to { opacity:1; transform:translateY(0) scale(1); } }
+    @keyframes twinkle { 0%,100% { opacity:.25; transform:scale(.8); } 50% { opacity:1; transform:scale(1.2); } }
+    @keyframes ripple { to { transform:scale(4); opacity:0; } }
+    @media (max-width:640px) { body { padding:12px; } .card { border-radius:18px; } }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:1ms !important; animation-iteration-count:1 !important; transition-duration:1ms !important; } }
+  </style>
+</head>
+<body>
+  <div class="sparkles" aria-hidden="true" id="sparkles"></div>
+  <main class="app">
+    <section class="card" aria-live="polite">
+      <div id="welcomeScreen" class="screen active">
+        <span class="tag">Premium Bridal Shower Experience</span>
+        <h1 class="title">Welcome to Ahmad & Ameena Quiz Game</h1>
+        <p class="subtitle">An interactive wedding event game where guests laugh, compete, and celebrate love in style.</p>
+        <div class="actions" style="justify-content:flex-start"><button id="continueBtn" class="btn" type="button">Enter Experience</button></div>
+      </div>
+      <div id="introScreen" class="screen">
+        <span class="tag">Round 1</span>
+        <h2 class="title">How well do you know the bride?</h2>
+        <p class="subtitle">You will answer 10 fun bridal-shower questions. Score 1 point for each correct answer and climb the leaderboard.</p>
+        <div class="actions" style="justify-content:flex-start"><button id="goInputBtn" class="btn" type="button">Start Game</button></div>
+      </div>
+      <div id="inputScreen" class="screen">
+        <span class="tag">Player Setup</span>
+        <h2 class="title">Enter your player name</h2>
+        <p class="subtitle">Your score will appear on the leaderboard at the end.</p>
+        <div class="stack">
+          <input id="playerName" class="input" type="text" maxlength="24" placeholder="e.g. Aisha / Team Bride">
+          <button id="startQuizBtn" class="btn" type="button">Begin Quiz</button>
+        </div>
+      </div>
+      <div id="quizScreen" class="screen">
+        <div class="top"><span id="progressText">Question 1 / 10</span><span id="scoreText">Score: 0</span></div>
+        <div class="progress-wrap"><div id="progressBar" class="progress"></div></div>
+        <span id="topicTag" class="topic">Bride Facts</span>
+        <h3 id="questionText" class="question"></h3>
+        <div id="options" class="options"></div>
+        <div id="feedback" class="feedback"></div>
+      </div>
+      <div id="resultScreen" class="screen">
+        <div class="result-wrap">
+          <span class="tag">Results</span>
+          <h2 class="title">Game Complete</h2>
+          <div id="scoreBadge" class="score-badge">0 / 10</div>
+          <p id="resultMessage" class="subtitle" style="margin:0;max-width:46ch"></p>
+          <div class="leaderboard">
+            <div class="leaderboard-head"><span>Leaderboard</span><span>Highest Score First</span></div>
+            <ul id="leaderboardList" class="leaderboard-list"></ul>
+            <div id="leaderboardEmpty" class="empty">No scores yet. Be the first to play.</div>
+          </div>
+          <div class="actions">
+            <button id="downloadBtn" class="btn btn-secondary" type="button">Download Leaderboard</button>
+            <button id="playAgainBtn" class="btn" type="button">Play Again</button>
+            <button id="backHomeBtn" class="btn btn-secondary" type="button">Back To Welcome</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script>
+    const STORAGE_KEY = "ahmad_ameena_bridal_quiz_leaderboard";
+    const QUESTIONS = [
+      { topic: "Bride Facts", question: "What is the bride's favorite comfort food?", options: ["Jollof rice", "Pasta", "Shawarma", "Fried rice"], correctIndex: 0 },
+      { topic: "Love Story", question: "Where did the bride and her partner first meet?", options: ["At work", "At a family event", "Through a friend", "At university"], correctIndex: 2 },
+      { topic: "Dream Trip", question: "What is her dream honeymoon destination?", options: ["Dubai", "Maldives", "Turkey", "Morocco"], correctIndex: 1 },
+      { topic: "Personality", question: "Which word best describes the bride's vibe?", options: ["Calm", "Bold", "Adventurous", "Graceful"], correctIndex: 3 },
+      { topic: "Favorites", question: "Which color palette does she love most for events?", options: ["Gold and burgundy", "Pink and blush", "Blue and silver", "Green and ivory"], correctIndex: 1 },
+      { topic: "Wedding Detail", question: "What part of the wedding planning excites her most?", options: ["Guest list", "Decor and aesthetics", "Budget sheets", "Transport logistics"], correctIndex: 1 },
+      { topic: "Fun Memory", question: "What snack does she reach for during movie night?", options: ["Popcorn", "Cupcakes", "Fruit parfait", "Plantain chips"], correctIndex: 0 },
+      { topic: "Daily Habit", question: "How does she usually start her morning?", options: ["Quick social media check", "Coffee or tea and planning", "Workout first", "Music and dancing"], correctIndex: 1 },
+      { topic: "Friendship Circle", question: "What would her friends say she always reminds people to do?", options: ["Drink water", "Be kind", "Take pictures", "Arrive early"], correctIndex: 1 },
+      { topic: "Final Round", question: "What matters most to her for this bridal shower?", options: ["Perfect photos", "Expensive gifts", "Love, laughter, and good memories", "Finishing early"], correctIndex: 2 }
+    ];
+    const state = { index: 0, score: 0, locked: false, playerName: "", questions: [], leaderboard: [] };
+    const ui = {
+      welcomeScreen: document.getElementById("welcomeScreen"), introScreen: document.getElementById("introScreen"),
+      inputScreen: document.getElementById("inputScreen"), quizScreen: document.getElementById("quizScreen"),
+      resultScreen: document.getElementById("resultScreen"), continueBtn: document.getElementById("continueBtn"),
+      goInputBtn: document.getElementById("goInputBtn"), playerName: document.getElementById("playerName"),
+      startQuizBtn: document.getElementById("startQuizBtn"), progressText: document.getElementById("progressText"),
+      scoreText: document.getElementById("scoreText"), progressBar: document.getElementById("progressBar"),
+      topicTag: document.getElementById("topicTag"), questionText: document.getElementById("questionText"),
+      options: document.getElementById("options"), feedback: document.getElementById("feedback"),
+      scoreBadge: document.getElementById("scoreBadge"), resultMessage: document.getElementById("resultMessage"),
+      leaderboardList: document.getElementById("leaderboardList"), leaderboardEmpty: document.getElementById("leaderboardEmpty"),
+      downloadBtn: document.getElementById("downloadBtn"), playAgainBtn: document.getElementById("playAgainBtn"),
+      backHomeBtn: document.getElementById("backHomeBtn"), sparkles: document.getElementById("sparkles")
+    };
+    function createSparkles() { for (let i = 0; i < 34; i += 1) { const s = document.createElement("span"); s.className = "sparkle"; s.style.left = `${Math.random() * 100}%`; s.style.top = `${Math.random() * 100}%`; s.style.animationDelay = `${Math.random() * 2.5}s`; s.style.animationDuration = `${2.2 + Math.random() * 2.4}s`; ui.sparkles.appendChild(s); } }
+    function ripple(event) { const b = event.currentTarget; const r = b.getBoundingClientRect(); const c = document.createElement("span"); const size = Math.max(r.width, r.height); c.className = "ripple"; c.style.width = `${size}px`; c.style.height = `${size}px`; c.style.left = `${event.clientX - r.left - size / 2}px`; c.style.top = `${event.clientY - r.top - size / 2}px`; b.appendChild(c); setTimeout(() => c.remove(), 520); }
+    function setScreen(screen) { [ui.welcomeScreen, ui.introScreen, ui.inputScreen, ui.quizScreen, ui.resultScreen].forEach((el) => el.classList.remove("active")); screen.classList.add("active"); }
+    function shuffle(arr) { const a = [...arr]; for (let i = a.length - 1; i > 0; i -= 1) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+    function prepareQuestion(q) { const indexed = q.options.map((t, i) => ({ t, i })); const mixed = shuffle(indexed); return { ...q, options: mixed.map((m) => m.t), correctIndex: mixed.findIndex((m) => m.i === q.correctIndex) }; }
+    function loadLeaderboard() { try { const raw = localStorage.getItem(STORAGE_KEY); const parsed = raw ? JSON.parse(raw) : []; state.leaderboard = Array.isArray(parsed) ? parsed : []; } catch { state.leaderboard = []; } }
+    function saveLeaderboard() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state.leaderboard)); }
+    function renderLeaderboard() { ui.leaderboardList.innerHTML = ""; if (state.leaderboard.length === 0) { ui.leaderboardEmpty.style.display = "block"; return; } ui.leaderboardEmpty.style.display = "none"; state.leaderboard.forEach((entry, idx) => { const row = document.createElement("li"); row.className = "leaderboard-row"; row.innerHTML = `<span class="rank">#${idx + 1}</span><span>${entry.name}</span><span class="score">${entry.score}/${entry.total}</span>`; ui.leaderboardList.appendChild(row); }); }
+    function addToLeaderboard(name, score, total) { state.leaderboard.push({ name, score, total, percent: Math.round((score / total) * 100), time: new Date().toISOString() }); state.leaderboard.sort((a, b) => (b.score - a.score) || (new Date(b.time) - new Date(a.time))); state.leaderboard = state.leaderboard.slice(0, 30); saveLeaderboard(); renderLeaderboard(); }
+    function downloadLeaderboard() { if (state.leaderboard.length === 0) return; const header = "Rank,Name,Score,Total,Percent,Timestamp"; const rows = state.leaderboard.map((r, i) => `${i + 1},"${String(r.name).replaceAll("\"", "\"\"")}",${r.score},${r.total},${r.percent},${r.time}`); const csv = [header, ...rows].join("\n"); const blob = new Blob([csv], { type: "text/csv;charset=utf-8" }); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = "bridal-shower-leaderboard.csv"; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); }
+    function resetQuiz() { state.index = 0; state.score = 0; state.locked = false; state.questions = shuffle(QUESTIONS).map(prepareQuestion); ui.feedback.textContent = ""; ui.feedback.classList.remove("show"); }
+    function startQuiz() { state.playerName = ui.playerName.value.trim() || "Guest"; resetQuiz(); setScreen(ui.quizScreen); renderQuestion(); }
+    function renderQuestion() { const q = state.questions[state.index]; const total = state.questions.length; ui.progressText.textContent = `Question ${state.index + 1} / ${total}`; ui.scoreText.textContent = `Score: ${state.score}`; ui.progressBar.style.width = `${((state.index + 1) / total) * 100}%`; ui.topicTag.textContent = q.topic; ui.questionText.textContent = q.question; ui.options.innerHTML = ""; ui.feedback.textContent = ""; ui.feedback.classList.remove("show"); state.locked = false; q.options.forEach((text, idx) => { const btn = document.createElement("button"); btn.type = "button"; btn.className = "option"; btn.textContent = text; btn.addEventListener("click", () => answer(idx)); ui.options.appendChild(btn); }); }
+    function answer(selected) { if (state.locked) return; state.locked = true; const q = state.questions[state.index]; const correct = selected === q.correctIndex; const buttons = ui.options.querySelectorAll(".option"); buttons.forEach((b, i) => { b.disabled = true; if (i === q.correctIndex) b.classList.add("correct"); else if (i === selected) b.classList.add("wrong"); }); if (correct) { state.score += 1; ui.feedback.textContent = "Correct! Bridal bestie energy unlocked."; } else { ui.feedback.textContent = "Nice try. Stay sharp for the next one."; } ui.feedback.classList.add("show"); ui.scoreText.textContent = `Score: ${state.score}`; setTimeout(() => { state.index += 1; if (state.index >= state.questions.length) showResult(); else renderQuestion(); }, 950); }
+    function showResult() { setScreen(ui.resultScreen); const total = state.questions.length; ui.scoreBadge.textContent = `${state.score} / ${total}`; const pct = Math.round((state.score / total) * 100); let msg = `${state.playerName}, you scored ${state.score} out of ${total}. `; if (pct >= 80) msg += "You know the bride so well. Main character energy."; else if (pct >= 50) msg += "Solid performance. You are definitely in the inner circle."; else msg += "Fun run! One more round and you'll climb the leaderboard."; ui.resultMessage.textContent = msg; addToLeaderboard(state.playerName, state.score, total); }
+    function backToWelcome() { setScreen(ui.welcomeScreen); ui.playerName.value = ""; }
+    function bind() { ui.continueBtn.addEventListener("click", (e) => { ripple(e); setScreen(ui.introScreen); }); ui.goInputBtn.addEventListener("click", (e) => { ripple(e); setScreen(ui.inputScreen); }); ui.startQuizBtn.addEventListener("click", (e) => { ripple(e); startQuiz(); }); ui.playAgainBtn.addEventListener("click", (e) => { ripple(e); setScreen(ui.inputScreen); }); ui.backHomeBtn.addEventListener("click", (e) => { ripple(e); backToWelcome(); }); ui.downloadBtn.addEventListener("click", (e) => { ripple(e); downloadLeaderboard(); }); }
+    function init() { createSparkles(); loadLeaderboard(); renderLeaderboard(); bind(); }
+    init();
+  </script>
+</body>
+</html>
