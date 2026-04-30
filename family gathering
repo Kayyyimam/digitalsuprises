@@ -1,0 +1,945 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EL Mahmud Family Quiz Night</title>
+  <style>
+    :root {
+      --bg-1: #061a1f;
+      --bg-2: #0b2a33;
+      --bg-3: #163946;
+      --gold: #d7a96b;
+      --gold-soft: #f2ddbd;
+      --white: #f4fbff;
+      --muted: #bed6df;
+      --glass: rgba(194, 238, 255, 0.08);
+      --glass-border: rgba(209, 246, 255, 0.22);
+      --ok: #9be0b4;
+      --bad: #f1c4c4;
+      --shadow: 0 24px 64px rgba(1, 14, 20, 0.55);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      height: 100%;
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+      color: var(--white);
+      background: radial-gradient(circle at 15% 20%, rgba(94, 206, 220, 0.12), transparent 38%),
+        radial-gradient(circle at 85% 15%, rgba(242, 221, 189, 0.08), transparent 32%),
+        linear-gradient(130deg, var(--bg-1), var(--bg-2), var(--bg-3));
+      overflow-x: hidden;
+    }
+
+    body {
+      position: relative;
+      min-height: 100vh;
+    }
+
+    .geometry {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(60deg, rgba(169, 230, 241, 0.09) 1px, transparent 1px),
+        linear-gradient(-60deg, rgba(169, 230, 241, 0.09) 1px, transparent 1px);
+      background-size: 42px 42px;
+      opacity: 0.18;
+      mask-image: radial-gradient(circle at center, black 20%, transparent 80%);
+    }
+
+    .orbs {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .orb {
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      filter: blur(30px);
+      opacity: 0.14;
+      animation: floatOrb linear infinite;
+    }
+
+    .orb.one {
+      background: #8ddbe7;
+      top: 8%;
+      left: -70px;
+      animation-duration: 21s;
+    }
+
+    .orb.two {
+      background: #f3c994;
+      top: 52%;
+      right: -100px;
+      animation-duration: 25s;
+    }
+
+    .orb.three {
+      background: #7cc6d9;
+      bottom: -80px;
+      left: 30%;
+      animation-duration: 27s;
+    }
+
+    #stars {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .app {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .card {
+      width: min(760px, 94vw);
+      background: var(--glass);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow);
+      border-radius: 24px;
+      padding: clamp(22px, 4vw, 36px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      background: linear-gradient(120deg, rgba(141, 219, 231, 0.28), transparent 35%, rgba(255, 255, 255, 0.08));
+      border-radius: 24px;
+      pointer-events: none;
+    }
+
+    .screen {
+      display: none;
+      animation: reveal 550ms ease both;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .title {
+      font-family: "Georgia", "Times New Roman", serif;
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      line-height: 1.15;
+      margin: 0 0 12px;
+      color: var(--gold-soft);
+      text-wrap: balance;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin: 0 0 24px;
+      font-size: clamp(1rem, 2.5vw, 1.1rem);
+      line-height: 1.6;
+    }
+
+    .welcome-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .input {
+      flex: 1 1 220px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(6, 29, 37, 0.58);
+      color: var(--white);
+      outline: none;
+      transition: border-color 200ms ease, box-shadow 200ms ease;
+      font-size: 1rem;
+    }
+
+    .input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(217, 183, 104, 0.25);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      color: #10313d;
+      background: linear-gradient(180deg, #f2ddbd, #d9ab70);
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 180ms ease, filter 180ms ease;
+      position: relative;
+      overflow: hidden;
+      font-size: 1rem;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      transform: translateY(-1px);
+      box-shadow: 0 0 0 3px rgba(141, 219, 231, 0.22), 0 10px 25px rgba(141, 219, 231, 0.34);
+      filter: brightness(1.03);
+      outline: none;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      transform: scale(0);
+      animation: ripple 520ms linear;
+      background: rgba(255, 255, 255, 0.65);
+      pointer-events: none;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 14px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .progress-wrap {
+      height: 8px;
+      width: 100%;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .progress {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #78cad9, #f2ddbd);
+      transition: width 350ms ease;
+    }
+
+    .question {
+      font-size: clamp(1.1rem, 2.8vw, 1.35rem);
+      font-weight: 700;
+      margin: 8px 0 16px;
+      line-height: 1.45;
+      text-wrap: balance;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+    }
+
+    .option {
+      width: 100%;
+      text-align: left;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(6, 27, 35, 0.7);
+      color: var(--white);
+      border-radius: 12px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: border-color 160ms ease, transform 150ms ease, background 200ms ease;
+      font-size: 0.98rem;
+    }
+
+    .option:hover:not(:disabled),
+    .option:focus-visible:not(:disabled) {
+      border-color: var(--gold);
+      transform: translateX(2px);
+      outline: none;
+    }
+
+    .option:disabled {
+      cursor: not-allowed;
+      opacity: 0.95;
+    }
+
+    .option.correct {
+      background: rgba(80, 148, 91, 0.26);
+      border-color: var(--ok);
+    }
+
+    .option.wrong {
+      background: rgba(181, 113, 113, 0.22);
+      border-color: var(--bad);
+    }
+
+    .feedback {
+      min-height: 28px;
+      margin-top: 12px;
+      color: var(--gold-soft);
+      font-size: 0.98rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      transform: translateY(3px);
+      transition: opacity 220ms ease, transform 220ms ease;
+    }
+
+    .feedback.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(141, 219, 231, 0.12);
+      color: var(--gold-soft);
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+    }
+
+    .result-wrap {
+      display: grid;
+      place-items: center;
+      text-align: center;
+      gap: 14px;
+    }
+
+    .score-ring {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      position: relative;
+      background: conic-gradient(var(--gold) 0deg, rgba(255, 255, 255, 0.15) 0deg);
+      box-shadow: inset 0 0 30px rgba(1, 5, 22, 0.45), 0 15px 35px rgba(0, 0, 0, 0.25);
+    }
+
+    .score-ring::after {
+      content: "";
+      position: absolute;
+      inset: 14px;
+      border-radius: 50%;
+      background: rgba(5, 24, 32, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .score-text {
+      position: relative;
+      z-index: 1;
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--gold-soft);
+    }
+
+    .footer-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--white);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .glow-burst {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--gold-soft);
+      box-shadow: 0 0 18px 8px rgba(242, 226, 181, 0.5);
+      animation: burst 900ms ease-out forwards;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    @keyframes reveal {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.985);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes ripple {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    @keyframes floatOrb {
+      0%,
+      100% {
+        transform: translateY(0px) translateX(0px);
+      }
+      50% {
+        transform: translateY(-24px) translateX(16px);
+      }
+    }
+
+    @keyframes burst {
+      0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(var(--tx), var(--ty)) scale(0.2);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        border-radius: 18px;
+      }
+
+      .score-ring {
+        width: 140px;
+        height: 140px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 1ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stars" aria-hidden="true"></canvas>
+  <div class="geometry" aria-hidden="true"></div>
+  <div class="orbs" aria-hidden="true">
+    <div class="orb one"></div>
+    <div class="orb two"></div>
+    <div class="orb three"></div>
+  </div>
+
+  <main class="app">
+    <section class="card" aria-live="polite">
+      <div id="homeScreen" class="screen active">
+        <h1 class="title">EL Mahmud Family Quiz Night 🌙</h1>
+        <p class="subtitle">
+          Welcome to a joyful family quiz where grandparents, parents, uncles, aunts, cousins, nephews, and nieces all play together.
+        </p>
+        <div class="welcome-row">
+          <input id="guestName" class="input" type="text" maxlength="24" placeholder="Enter your name (optional)">
+          <button id="startBtn" class="btn" type="button">Start Quiz</button>
+        </div>
+        <p class="subtitle" style="margin-bottom:0">
+          May Allah place barakah, laughter, and love in every family home.
+        </p>
+      </div>
+
+      <div id="quizScreen" class="screen">
+        <div class="top-bar">
+          <span id="progressText">Question 1 / 12</span>
+          <span id="scoreText">Score: 0</span>
+        </div>
+        <div class="progress-wrap"><div id="progressBar" class="progress"></div></div>
+        <div id="topicChip" class="chip">Topic</div>
+        <h2 id="questionText" class="question"></h2>
+        <div id="options" class="options"></div>
+        <div id="feedback" class="feedback"></div>
+      </div>
+
+      <div id="resultScreen" class="screen">
+        <div class="result-wrap">
+          <h2 class="title" style="font-size:clamp(1.6rem,4.6vw,2.4rem);margin-bottom:2px">Quiz Complete ✨</h2>
+          <div id="scoreRing" class="score-ring">
+            <div id="scoreValue" class="score-text">0%</div>
+          </div>
+          <p id="resultMessage" class="subtitle" style="margin:0;max-width:45ch"></p>
+          <div class="footer-actions">
+            <button id="restartBtn" class="btn" type="button">Restart Quiz</button>
+            <button id="homeBtn" class="btn btn-secondary" type="button">Back to Welcome</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const QUESTIONS = [
+      {
+        id: 1,
+        topic: "Family Adab",
+        question: "You arrive and see both elders and younger cousins. What is the most balanced first move?",
+        options: [
+          "Greet the nearest people first, then settle in quietly",
+          "Go directly to elders first, then greet everyone else later",
+          "Give a general salam to all and respectfully greet elders first",
+          "Wait for the host to invite greetings before approaching anyone"
+        ],
+        correctIndex: 3
+      },
+      {
+        id: 2,
+        topic: "Character Guess",
+        question: "During a long delay before dinner, who best shows sabr and husn al-khuluq (good character)?",
+        options: [
+          "Uncle Hamza",
+          "Aunt Khadija",
+          "Cousin Bilal",
+          "Nephew Yusuf"
+        ],
+        correctIndex: 1
+      },
+      {
+        id: 3,
+        topic: "Islamic Manners",
+        question: "A disagreement starts between two relatives. Which response is closest to Islamic adab?",
+        options: [
+          "Stay neutral and avoid involvement completely",
+          "Defend the person you know best so it ends quickly",
+          "Lower tension, speak gently, and redirect to respectful words",
+          "Suggest pausing the topic and revisiting it after dessert"
+        ],
+        correctIndex: 2
+      },
+      {
+        id: 4,
+        topic: "Character Guess",
+        question: "Who best reflects generosity without showing off?",
+        options: [
+          "Grandpa Suleiman",
+          "Cousin Maryam",
+          "Niece Sara",
+          "Uncle Ibrahim"
+        ],
+        correctIndex: 0
+      },
+      {
+        id: 5,
+        topic: "Family Values",
+        question: "Which habit most consistently strengthens family bonds over time?",
+        options: [
+          "Meeting at major events and keeping communication practical",
+          "Checking in regularly, forgiving quickly, and making dua",
+          "Giving relatives space unless they ask for support",
+          "Addressing issues immediately, even if the tone is firm"
+        ],
+        correctIndex: 1
+      },
+      {
+        id: 6,
+        topic: "Character Guess",
+        question: "Who displays humility in conversation?",
+        options: [
+          "Aunt Safiya",
+          "Nephew Zayd",
+          "Cousin Amina",
+          "Uncle Rashid"
+        ],
+        correctIndex: 2
+      },
+      {
+        id: 7,
+        topic: "Sunnah Spirit",
+        question: "Food is limited and many guests are still waiting. What is the best choice?",
+        options: [
+          "Take a normal portion now and avoid second helpings",
+          "Wait calmly and help others get served first",
+          "Ask the host quietly if more food is coming before serving",
+          "Serve your close family first to keep children settled"
+        ],
+        correctIndex: 1
+      },
+      {
+        id: 8,
+        topic: "Character Guess",
+        question: "After the meal, who shows gratitude in the best way?",
+        options: [
+          "Cousin Haris",
+          "Niece Lina",
+          "Grandma Fatimah",
+          "Uncle Nabil"
+        ],
+        correctIndex: 2
+      },
+      {
+        id: 9,
+        topic: "Family Fun",
+        question: "A game round is disputed. Which action keeps fun and fairness together?",
+        options: [
+          "Choose a neutral judge and replay the round calmly",
+          "Let both teams vote and accept majority decision",
+          "Skip this point and continue to keep the mood light",
+          "Allow elders to decide immediately to avoid delay"
+        ],
+        correctIndex: 0
+      },
+      {
+        id: 10,
+        topic: "Character Guess",
+        question: "A child loses an envelope with money. Who best demonstrates amanah (trustworthiness)?",
+        options: [
+          "Aunt Zainab",
+          "Nephew Idris",
+          "Uncle Musa",
+          "Cousin Rayyan"
+        ],
+        correctIndex: 0
+      },
+      {
+        id: 11,
+        topic: "Good Speech",
+        question: "Which style of speech is most suitable for a joyful Islamic family gathering?",
+        options: [
+          "Playful but respectful words, free from mockery and gossip",
+          "Honest speech, including blunt jokes, as long as no one objects",
+          "Advising people openly so everyone can learn together",
+          "Light teasing between close relatives to keep conversations lively"
+        ],
+        correctIndex: 0
+      },
+      {
+        id: 12,
+        topic: "Character Guess",
+        question: "Who shows real leadership with adab during the evening?",
+        options: [
+          "Nephew Adam",
+          "Uncle Farooq",
+          "Aunt Ruqayyah",
+          "Cousin Sumayyah"
+        ],
+        correctIndex: 2
+      }
+    ];
+
+    const state = {
+      currentIndex: 0,
+      score: 0,
+      answersLocked: false,
+      userName: "",
+      questions: []
+    };
+
+    const ui = {
+      homeScreen: document.getElementById("homeScreen"),
+      quizScreen: document.getElementById("quizScreen"),
+      resultScreen: document.getElementById("resultScreen"),
+      guestName: document.getElementById("guestName"),
+      startBtn: document.getElementById("startBtn"),
+      progressText: document.getElementById("progressText"),
+      scoreText: document.getElementById("scoreText"),
+      progressBar: document.getElementById("progressBar"),
+      topicChip: document.getElementById("topicChip"),
+      questionText: document.getElementById("questionText"),
+      options: document.getElementById("options"),
+      feedback: document.getElementById("feedback"),
+      scoreRing: document.getElementById("scoreRing"),
+      scoreValue: document.getElementById("scoreValue"),
+      resultMessage: document.getElementById("resultMessage"),
+      restartBtn: document.getElementById("restartBtn"),
+      homeBtn: document.getElementById("homeBtn")
+    };
+
+    const FEEDBACK_TEXT = {
+      correct: [
+        "MashaAllah, beautiful answer 🌿",
+        "Excellent! May Allah increase your knowledge 🌿",
+        "Wonderful effort - keep shining in goodness ✨"
+      ],
+      wrong: [
+        "Good try, keep learning 🤍",
+        "A gentle reminder - every step in knowledge is rewarded 🌙",
+        "No worries, growth comes with every question 🌿"
+      ]
+    };
+
+    function shuffle(array) {
+      const clone = [...array];
+      for (let i = clone.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [clone[i], clone[j]] = [clone[j], clone[i]];
+      }
+      return clone;
+    }
+
+    function prepareQuestion(question) {
+      const indexedOptions = question.options.map((text, index) => ({ text, originalIndex: index }));
+      const shuffledOptions = shuffle(indexedOptions);
+      const remappedCorrectIndex = shuffledOptions.findIndex((item) => item.originalIndex === question.correctIndex);
+      return {
+        ...question,
+        options: shuffledOptions.map((item) => item.text),
+        correctIndex: remappedCorrectIndex
+      };
+    }
+
+    function setActiveScreen(screenEl) {
+      [ui.homeScreen, ui.quizScreen, ui.resultScreen].forEach((screen) => screen.classList.remove("active"));
+      screenEl.classList.add("active");
+    }
+
+    function createRipple(event) {
+      const button = event.currentTarget;
+      const rect = button.getBoundingClientRect();
+      const circle = document.createElement("span");
+      const size = Math.max(rect.width, rect.height);
+      circle.className = "ripple";
+      circle.style.width = `${size}px`;
+      circle.style.height = `${size}px`;
+      circle.style.left = `${event.clientX - rect.left - size / 2}px`;
+      circle.style.top = `${event.clientY - rect.top - size / 2}px`;
+      button.appendChild(circle);
+      window.setTimeout(() => circle.remove(), 520);
+    }
+
+    function randomFrom(list) {
+      return list[Math.floor(Math.random() * list.length)];
+    }
+
+    function resetState() {
+      state.currentIndex = 0;
+      state.score = 0;
+      state.answersLocked = false;
+      state.questions = shuffle(QUESTIONS).map(prepareQuestion);
+      ui.feedback.textContent = "";
+      ui.feedback.classList.remove("show");
+    }
+
+    function startQuiz() {
+      resetState();
+      state.userName = ui.guestName.value.trim();
+      setActiveScreen(ui.quizScreen);
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const question = state.questions[state.currentIndex];
+      const total = state.questions.length;
+      const progressPct = ((state.currentIndex + 1) / total) * 100;
+
+      ui.progressText.textContent = `Question ${state.currentIndex + 1} / ${total}`;
+      ui.scoreText.textContent = `Score: ${state.score}`;
+      ui.progressBar.style.width = `${progressPct}%`;
+      ui.topicChip.textContent = question.topic;
+      ui.questionText.textContent = question.question;
+      ui.options.innerHTML = "";
+      ui.feedback.textContent = "";
+      ui.feedback.classList.remove("show");
+      state.answersLocked = false;
+
+      question.options.forEach((optionText, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "option";
+        button.textContent = optionText;
+        button.setAttribute("aria-label", `Option ${index + 1}: ${optionText}`);
+        button.addEventListener("click", () => handleAnswer(index));
+        ui.options.appendChild(button);
+      });
+    }
+
+    function showFeedback(isCorrect) {
+      ui.feedback.textContent = isCorrect ? randomFrom(FEEDBACK_TEXT.correct) : randomFrom(FEEDBACK_TEXT.wrong);
+      ui.feedback.classList.add("show");
+    }
+
+    function lockOptions() {
+      const buttons = ui.options.querySelectorAll(".option");
+      buttons.forEach((button) => {
+        button.disabled = true;
+      });
+    }
+
+    function highlightAnswers(correctIndex, selectedIndex) {
+      const buttons = ui.options.querySelectorAll(".option");
+      buttons.forEach((button, index) => {
+        if (index === correctIndex) {
+          button.classList.add("correct");
+        } else if (index === selectedIndex) {
+          button.classList.add("wrong");
+        }
+      });
+    }
+
+    function handleAnswer(selectedIndex) {
+      if (state.answersLocked) return;
+      state.answersLocked = true;
+
+      const question = state.questions[state.currentIndex];
+      const isCorrect = selectedIndex === question.correctIndex;
+
+      if (isCorrect) {
+        state.score += 1;
+        ui.scoreText.textContent = `Score: ${state.score}`;
+      }
+
+      lockOptions();
+      highlightAnswers(question.correctIndex, selectedIndex);
+      showFeedback(isCorrect);
+
+      window.setTimeout(() => {
+        state.currentIndex += 1;
+        if (state.currentIndex >= state.questions.length) {
+          renderResult();
+        } else {
+          renderQuestion();
+        }
+      }, 1100);
+    }
+
+    function animateScore(percent) {
+      const duration = 950;
+      const start = performance.now();
+
+      function frame(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const value = Math.round(percent * eased);
+        const degrees = Math.round((value / 100) * 360);
+        ui.scoreValue.textContent = `${value}%`;
+        ui.scoreRing.style.background = `conic-gradient(var(--gold) ${degrees}deg, rgba(255,255,255,0.15) ${degrees}deg)`;
+
+        if (progress < 1) {
+          requestAnimationFrame(frame);
+        }
+      }
+
+      requestAnimationFrame(frame);
+    }
+
+    function makeBurst() {
+      const card = document.querySelector(".card");
+      const pieces = 14;
+      for (let i = 0; i < pieces; i += 1) {
+        const dot = document.createElement("span");
+        dot.className = "glow-burst";
+        const angle = (Math.PI * 2 * i) / pieces;
+        const distance = 70 + Math.random() * 65;
+        dot.style.left = "50%";
+        dot.style.top = "44%";
+        dot.style.setProperty("--tx", `${Math.cos(angle) * distance}px`);
+        dot.style.setProperty("--ty", `${Math.sin(angle) * distance}px`);
+        card.appendChild(dot);
+        window.setTimeout(() => dot.remove(), 920);
+      }
+    }
+
+    function renderResult() {
+      setActiveScreen(ui.resultScreen);
+      const total = state.questions.length;
+      const percent = Math.round((state.score / total) * 100);
+
+      animateScore(percent);
+      makeBurst();
+
+      const name = state.userName || "Guest";
+      let message = `May Allah bless your knowledge, ${name} 🌙 You scored ${state.score} out of ${total}.`;
+
+      if (percent >= 85) {
+        message += " MashaAllah, excellent understanding and beautiful effort.";
+      } else if (percent >= 60) {
+        message += " Great effort, may Allah increase you in beneficial knowledge.";
+      } else {
+        message += " Every answer is a step in learning. Keep going with a sincere heart.";
+      }
+
+      ui.resultMessage.textContent = message;
+    }
+
+    function backToHome() {
+      setActiveScreen(ui.homeScreen);
+      ui.scoreRing.style.background = "conic-gradient(var(--gold) 0deg, rgba(255, 255, 255, 0.15) 0deg)";
+      ui.scoreValue.textContent = "0%";
+    }
+
+    function initStars() {
+      const canvas = document.getElementById("stars");
+      const ctx = canvas.getContext("2d");
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let stars = [];
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const count = Math.min(120, Math.round((canvas.width * canvas.height) / 12000));
+        stars = Array.from({ length: count }, () => ({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.6 + 0.4,
+          a: Math.random() * 0.6 + 0.2,
+          drift: (Math.random() - 0.5) * 0.08
+        }));
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (const star of stars) {
+          star.x += star.drift;
+          if (star.x < 0) star.x = canvas.width;
+          if (star.x > canvas.width) star.x = 0;
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(255, 247, 220, ${star.a})`;
+          ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        if (!reducedMotion) requestAnimationFrame(draw);
+      }
+
+      resize();
+      draw();
+      window.addEventListener("resize", resize);
+    }
+
+    function init() {
+      initStars();
+      ui.startBtn.addEventListener("click", (event) => {
+        createRipple(event);
+        startQuiz();
+      });
+      ui.restartBtn.addEventListener("click", (event) => {
+        createRipple(event);
+        startQuiz();
+      });
+      ui.homeBtn.addEventListener("click", (event) => {
+        createRipple(event);
+        backToHome();
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>
