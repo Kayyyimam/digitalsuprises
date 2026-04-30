@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fatima's Walima Islamic Quiz</title>
+  <title>EL Mahmud Family Quiz Night</title>
   <style>
     :root {
-      --bg-1: #07122d;
-      --bg-2: #0c1d46;
-      --bg-3: #122960;
-      --gold: #d9b768;
-      --gold-soft: #f0deaa;
-      --white: #f6f8ff;
-      --muted: #c8d0ea;
-      --glass: rgba(255, 255, 255, 0.08);
-      --glass-border: rgba(255, 255, 255, 0.15);
-      --ok: #9fd6a7;
-      --bad: #f2c6c6;
-      --shadow: 0 20px 60px rgba(1, 5, 22, 0.5);
+      --bg-1: #061a1f;
+      --bg-2: #0b2a33;
+      --bg-3: #163946;
+      --gold: #d7a96b;
+      --gold-soft: #f2ddbd;
+      --white: #f4fbff;
+      --muted: #bed6df;
+      --glass: rgba(194, 238, 255, 0.08);
+      --glass-border: rgba(209, 246, 255, 0.22);
+      --ok: #9be0b4;
+      --bad: #f1c4c4;
+      --shadow: 0 24px 64px rgba(1, 14, 20, 0.55);
     }
 
     * {
@@ -30,8 +30,8 @@
       height: 100%;
       font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
       color: var(--white);
-      background: radial-gradient(circle at 20% 15%, rgba(238, 207, 138, 0.1), transparent 40%),
-        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.08), transparent 35%),
+      background: radial-gradient(circle at 15% 20%, rgba(94, 206, 220, 0.12), transparent 38%),
+        radial-gradient(circle at 85% 15%, rgba(242, 221, 189, 0.08), transparent 32%),
         linear-gradient(130deg, var(--bg-1), var(--bg-2), var(--bg-3));
       overflow-x: hidden;
     }
@@ -46,8 +46,8 @@
       inset: 0;
       pointer-events: none;
       background-image:
-        linear-gradient(60deg, rgba(217, 183, 104, 0.08) 1px, transparent 1px),
-        linear-gradient(-60deg, rgba(217, 183, 104, 0.08) 1px, transparent 1px);
+        linear-gradient(60deg, rgba(169, 230, 241, 0.09) 1px, transparent 1px),
+        linear-gradient(-60deg, rgba(169, 230, 241, 0.09) 1px, transparent 1px);
       background-size: 42px 42px;
       opacity: 0.18;
       mask-image: radial-gradient(circle at center, black 20%, transparent 80%);
@@ -72,21 +72,21 @@
     }
 
     .orb.one {
-      background: #f5d07b;
+      background: #8ddbe7;
       top: 8%;
       left: -70px;
       animation-duration: 21s;
     }
 
     .orb.two {
-      background: #9ab4ff;
+      background: #f3c994;
       top: 52%;
       right: -100px;
       animation-duration: 25s;
     }
 
     .orb.three {
-      background: #f7e4b5;
+      background: #7cc6d9;
       bottom: -80px;
       left: 30%;
       animation-duration: 27s;
@@ -125,7 +125,7 @@
       content: "";
       position: absolute;
       inset: -1px;
-      background: linear-gradient(120deg, rgba(217, 183, 104, 0.3), transparent 35%, rgba(255, 255, 255, 0.08));
+      background: linear-gradient(120deg, rgba(141, 219, 231, 0.28), transparent 35%, rgba(255, 255, 255, 0.08));
       border-radius: 24px;
       pointer-events: none;
     }
@@ -167,7 +167,7 @@
       padding: 12px 14px;
       border-radius: 12px;
       border: 1px solid rgba(255, 255, 255, 0.2);
-      background: rgba(10, 19, 46, 0.55);
+      background: rgba(6, 29, 37, 0.58);
       color: var(--white);
       outline: none;
       transition: border-color 200ms ease, box-shadow 200ms ease;
@@ -183,8 +183,8 @@
       border: none;
       border-radius: 12px;
       padding: 12px 18px;
-      color: #13203f;
-      background: linear-gradient(180deg, #f4dea5, #d8b86a);
+      color: #10313d;
+      background: linear-gradient(180deg, #f2ddbd, #d9ab70);
       font-weight: 700;
       cursor: pointer;
       transition: transform 160ms ease, box-shadow 180ms ease, filter 180ms ease;
@@ -196,7 +196,7 @@
     .btn:hover,
     .btn:focus-visible {
       transform: translateY(-1px);
-      box-shadow: 0 0 0 3px rgba(217, 183, 104, 0.2), 0 10px 25px rgba(217, 183, 104, 0.35);
+      box-shadow: 0 0 0 3px rgba(141, 219, 231, 0.22), 0 10px 25px rgba(141, 219, 231, 0.34);
       filter: brightness(1.03);
       outline: none;
     }
@@ -237,7 +237,7 @@
       height: 100%;
       width: 0%;
       border-radius: 999px;
-      background: linear-gradient(90deg, #c49d45, #f2e2b5);
+      background: linear-gradient(90deg, #78cad9, #f2ddbd);
       transition: width 350ms ease;
     }
 
@@ -258,7 +258,7 @@
       width: 100%;
       text-align: left;
       border: 1px solid rgba(255, 255, 255, 0.2);
-      background: rgba(6, 14, 38, 0.66);
+      background: rgba(6, 27, 35, 0.7);
       color: var(--white);
       border-radius: 12px;
       padding: 12px 14px;
@@ -314,7 +314,7 @@
       padding: 6px 10px;
       border-radius: 999px;
       border: 1px solid rgba(255, 255, 255, 0.2);
-      background: rgba(217, 183, 104, 0.12);
+      background: rgba(141, 219, 231, 0.12);
       color: var(--gold-soft);
       font-size: 0.85rem;
       margin-bottom: 8px;
@@ -343,7 +343,7 @@
       position: absolute;
       inset: 14px;
       border-radius: 50%;
-      background: rgba(9, 18, 44, 0.95);
+      background: rgba(5, 24, 32, 0.95);
       border: 1px solid rgba(255, 255, 255, 0.18);
     }
 
@@ -455,16 +455,16 @@
   <main class="app">
     <section class="card" aria-live="polite">
       <div id="homeScreen" class="screen active">
-        <h1 class="title">Fatima's Walima Islamic Quiz 🌙</h1>
+        <h1 class="title">EL Mahmud Family Quiz Night 🌙</h1>
         <p class="subtitle">
-          Welcome to a joyful quiz experience celebrating knowledge, adab, and the beauty of Islamic values.
+          Welcome to a joyful family quiz where grandparents, parents, uncles, aunts, cousins, nephews, and nieces all play together.
         </p>
         <div class="welcome-row">
           <input id="guestName" class="input" type="text" maxlength="24" placeholder="Enter your name (optional)">
           <button id="startBtn" class="btn" type="button">Start Quiz</button>
         </div>
         <p class="subtitle" style="margin-bottom:0">
-          May Allah increase us all in beneficial knowledge and barakah.
+          May Allah place barakah, laughter, and love in every family home.
         </p>
       </div>
 
@@ -500,86 +500,146 @@
     const QUESTIONS = [
       {
         id: 1,
-        topic: "Adab",
-        question: "Which action reflects good Islamic adab when greeting others?",
-        options: ["Ignoring people quietly", "Giving salam with a smile", "Waiting for others to greet first always", "Only greeting close friends"],
-        correctIndex: 1
+        topic: "Family Adab",
+        question: "You arrive and see both elders and younger cousins. What is the most balanced first move?",
+        options: [
+          "Greet the nearest people first, then settle in quietly",
+          "Go directly to elders first, then greet everyone else later",
+          "Give a general salam to all and respectfully greet elders first",
+          "Wait for the host to invite greetings before approaching anyone"
+        ],
+        correctIndex: 3
       },
       {
         id: 2,
-        topic: "Marriage",
-        question: "What is a key purpose of marriage in Islam?",
-        options: ["Showing wealth to society", "Building tranquility, mercy, and companionship", "Avoiding all responsibilities", "Competing with others"],
+        topic: "Character Guess",
+        question: "During a long delay before dinner, who best shows sabr and husn al-khuluq (good character)?",
+        options: [
+          "Uncle Hamza",
+          "Aunt Khadija",
+          "Cousin Bilal",
+          "Nephew Yusuf"
+        ],
         correctIndex: 1
       },
       {
         id: 3,
-        topic: "Walima",
-        question: "The Walima is best understood as:",
-        options: ["A private legal document", "A post-marriage celebratory meal with gratitude", "An obligatory annual event", "A cultural event with no Islamic value"],
-        correctIndex: 1
+        topic: "Islamic Manners",
+        question: "A disagreement starts between two relatives. Which response is closest to Islamic adab?",
+        options: [
+          "Stay neutral and avoid involvement completely",
+          "Defend the person you know best so it ends quickly",
+          "Lower tension, speak gently, and redirect to respectful words",
+          "Suggest pausing the topic and revisiting it after dessert"
+        ],
+        correctIndex: 2
       },
       {
         id: 4,
-        topic: "Sunnah",
-        question: "In daily life, following the Sunnah mainly means:",
-        options: ["Only reading historical stories", "Trying to practice the Prophet's guidance in character and actions", "Focusing only on dress style", "Copying others without understanding"],
-        correctIndex: 1
+        topic: "Character Guess",
+        question: "Who best reflects generosity without showing off?",
+        options: [
+          "Grandpa Suleiman",
+          "Cousin Maryam",
+          "Niece Sara",
+          "Uncle Ibrahim"
+        ],
+        correctIndex: 0
       },
       {
         id: 5,
         topic: "Family Values",
-        question: "Which value strengthens family ties according to Islamic teachings?",
-        options: ["Harsh criticism in public", "Cutting ties over small issues", "Patience, forgiveness, and kindness", "Avoiding communication"],
-        correctIndex: 2
+        question: "Which habit most consistently strengthens family bonds over time?",
+        options: [
+          "Meeting at major events and keeping communication practical",
+          "Checking in regularly, forgiving quickly, and making dua",
+          "Giving relatives space unless they ask for support",
+          "Addressing issues immediately, even if the tone is firm"
+        ],
+        correctIndex: 1
       },
       {
         id: 6,
-        topic: "Adab",
-        question: "When someone speaks, what is the best Islamic manner?",
-        options: ["Interrupt quickly", "Listen attentively and respond respectfully", "Look away and stay distracted", "Laugh at mistakes"],
-        correctIndex: 1
-      },
-      {
-        id: 7,
-        topic: "Marriage",
-        question: "Mutual rights and responsibilities in marriage are based on:",
-        options: ["Compassion, fairness, and taqwa", "Social status only", "One-sided control", "Public opinion alone"],
-        correctIndex: 0
-      },
-      {
-        id: 8,
-        topic: "Walima",
-        question: "A beautiful spirit of Walima includes:",
-        options: ["Waste and extravagance", "Gratitude to Allah and sharing joy with others", "Excluding people intentionally", "Competing for luxury"],
-        correctIndex: 1
-      },
-      {
-        id: 9,
-        topic: "Sunnah",
-        question: "How should we respond when we do not know an Islamic answer?",
-        options: ["Guess confidently", "Say 'I don't know' and seek knowledge", "Argue loudly", "Avoid learning"],
-        correctIndex: 1
-      },
-      {
-        id: 10,
-        topic: "Values",
-        question: "What is one way to show gratitude in Islam?",
-        options: ["Complaining constantly", "Ignoring blessings", "Thanking Allah and using blessings well", "Comparing ourselves negatively"],
+        topic: "Character Guess",
+        question: "Who displays humility in conversation?",
+        options: [
+          "Aunt Safiya",
+          "Nephew Zayd",
+          "Cousin Amina",
+          "Uncle Rashid"
+        ],
         correctIndex: 2
       },
       {
+        id: 7,
+        topic: "Sunnah Spirit",
+        question: "Food is limited and many guests are still waiting. What is the best choice?",
+        options: [
+          "Take a normal portion now and avoid second helpings",
+          "Wait calmly and help others get served first",
+          "Ask the host quietly if more food is coming before serving",
+          "Serve your close family first to keep children settled"
+        ],
+        correctIndex: 1
+      },
+      {
+        id: 8,
+        topic: "Character Guess",
+        question: "After the meal, who shows gratitude in the best way?",
+        options: [
+          "Cousin Haris",
+          "Niece Lina",
+          "Grandma Fatimah",
+          "Uncle Nabil"
+        ],
+        correctIndex: 2
+      },
+      {
+        id: 9,
+        topic: "Family Fun",
+        question: "A game round is disputed. Which action keeps fun and fairness together?",
+        options: [
+          "Choose a neutral judge and replay the round calmly",
+          "Let both teams vote and accept majority decision",
+          "Skip this point and continue to keep the mood light",
+          "Allow elders to decide immediately to avoid delay"
+        ],
+        correctIndex: 0
+      },
+      {
+        id: 10,
+        topic: "Character Guess",
+        question: "A child loses an envelope with money. Who best demonstrates amanah (trustworthiness)?",
+        options: [
+          "Aunt Zainab",
+          "Nephew Idris",
+          "Uncle Musa",
+          "Cousin Rayyan"
+        ],
+        correctIndex: 0
+      },
+      {
         id: 11,
-        topic: "Adab",
-        question: "Which statement best reflects Islamic speech etiquette?",
-        options: ["Speak truth with kindness", "Say whatever feels good", "Mocking can be fun", "Loud speech is always better"],
+        topic: "Good Speech",
+        question: "Which style of speech is most suitable for a joyful Islamic family gathering?",
+        options: [
+          "Playful but respectful words, free from mockery and gossip",
+          "Honest speech, including blunt jokes, as long as no one objects",
+          "Advising people openly so everyone can learn together",
+          "Light teasing between close relatives to keep conversations lively"
+        ],
         correctIndex: 0
       },
       {
         id: 12,
-        topic: "Family Values",
-        question: "What helps keep a home filled with mercy?",
-        options: ["Frequent blame", "Silent resentment", "Dua, gentle communication, and respect", "Ignoring each other"],
+        topic: "Character Guess",
+        question: "Who shows real leadership with adab during the evening?",
+        options: [
+          "Nephew Adam",
+          "Uncle Farooq",
+          "Aunt Ruqayyah",
+          "Cousin Sumayyah"
+        ],
         correctIndex: 2
       }
     ];
@@ -634,6 +694,17 @@
       return clone;
     }
 
+    function prepareQuestion(question) {
+      const indexedOptions = question.options.map((text, index) => ({ text, originalIndex: index }));
+      const shuffledOptions = shuffle(indexedOptions);
+      const remappedCorrectIndex = shuffledOptions.findIndex((item) => item.originalIndex === question.correctIndex);
+      return {
+        ...question,
+        options: shuffledOptions.map((item) => item.text),
+        correctIndex: remappedCorrectIndex
+      };
+    }
+
     function setActiveScreen(screenEl) {
       [ui.homeScreen, ui.quizScreen, ui.resultScreen].forEach((screen) => screen.classList.remove("active"));
       screenEl.classList.add("active");
@@ -661,7 +732,7 @@
       state.currentIndex = 0;
       state.score = 0;
       state.answersLocked = false;
-      state.questions = shuffle(QUESTIONS);
+      state.questions = shuffle(QUESTIONS).map(prepareQuestion);
       ui.feedback.textContent = "";
       ui.feedback.classList.remove("show");
     }
