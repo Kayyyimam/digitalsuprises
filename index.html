@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EL Mahmud Family Quiz Night</title>
+  <title>Muhammad & Rahma - Groom Challenge Quiz</title>
   <style>
     :root {
-      --bg-1: #061a1f;
-      --bg-2: #0b2a33;
-      --bg-3: #163946;
-      --gold: #d7a96b;
-      --gold-soft: #f2ddbd;
-      --white: #f4fbff;
-      --muted: #bed6df;
-      --glass: rgba(194, 238, 255, 0.08);
-      --glass-border: rgba(209, 246, 255, 0.22);
-      --ok: #9be0b4;
-      --bad: #f1c4c4;
-      --shadow: 0 24px 64px rgba(1, 14, 20, 0.55);
+      --bg-1: #05070c;
+      --bg-2: #0d111a;
+      --bg-3: #151d2a;
+      --accent: #4ea3ff;
+      --accent-soft: #7fc5ff;
+      --white: #edf3ff;
+      --muted: #a8b3c9;
+      --glass: rgba(110, 146, 200, 0.1);
+      --glass-border: rgba(142, 174, 224, 0.24);
+      --ok: #96e2ad;
+      --bad: #f1bfc7;
+      --shadow: 0 24px 64px rgba(1, 5, 14, 0.65);
     }
 
     * {
@@ -30,8 +30,8 @@
       height: 100%;
       font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
       color: var(--white);
-      background: radial-gradient(circle at 15% 20%, rgba(94, 206, 220, 0.12), transparent 38%),
-        radial-gradient(circle at 85% 15%, rgba(242, 221, 189, 0.08), transparent 32%),
+      background: radial-gradient(circle at 20% 18%, rgba(78, 163, 255, 0.14), transparent 40%),
+        radial-gradient(circle at 80% 12%, rgba(127, 197, 255, 0.08), transparent 34%),
         linear-gradient(130deg, var(--bg-1), var(--bg-2), var(--bg-3));
       overflow-x: hidden;
     }
@@ -46,8 +46,8 @@
       inset: 0;
       pointer-events: none;
       background-image:
-        linear-gradient(60deg, rgba(169, 230, 241, 0.09) 1px, transparent 1px),
-        linear-gradient(-60deg, rgba(169, 230, 241, 0.09) 1px, transparent 1px);
+        linear-gradient(60deg, rgba(103, 151, 230, 0.13) 1px, transparent 1px),
+        linear-gradient(-60deg, rgba(103, 151, 230, 0.13) 1px, transparent 1px);
       background-size: 42px 42px;
       opacity: 0.18;
       mask-image: radial-gradient(circle at center, black 20%, transparent 80%);
@@ -72,21 +72,21 @@
     }
 
     .orb.one {
-      background: #8ddbe7;
+      background: #3f88da;
       top: 8%;
       left: -70px;
       animation-duration: 21s;
     }
 
     .orb.two {
-      background: #f3c994;
+      background: #74b0ff;
       top: 52%;
       right: -100px;
       animation-duration: 25s;
     }
 
     .orb.three {
-      background: #7cc6d9;
+      background: #2868bd;
       bottom: -80px;
       left: 30%;
       animation-duration: 27s;
@@ -125,7 +125,7 @@
       content: "";
       position: absolute;
       inset: -1px;
-      background: linear-gradient(120deg, rgba(141, 219, 231, 0.28), transparent 35%, rgba(255, 255, 255, 0.08));
+      background: linear-gradient(120deg, rgba(78, 163, 255, 0.24), transparent 35%, rgba(255, 255, 255, 0.08));
       border-radius: 24px;
       pointer-events: none;
     }
@@ -139,12 +139,75 @@
       display: block;
     }
 
+    .home-hero {
+      display: grid;
+      gap: 18px;
+    }
+
+    .home-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      border: 1px solid rgba(127, 197, 255, 0.32);
+      border-radius: 999px;
+      padding: 6px 12px;
+      color: var(--accent-soft);
+      background: rgba(78, 163, 255, 0.12);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .home-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1.2fr 0.8fr;
+      align-items: stretch;
+    }
+
+    .home-panel {
+      background: linear-gradient(170deg, rgba(10, 21, 39, 0.92), rgba(8, 15, 27, 0.9));
+      border: 1px solid rgba(127, 197, 255, 0.2);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .home-metrics {
+      display: grid;
+      gap: 10px;
+    }
+
+    .metric {
+      border: 1px solid rgba(127, 197, 255, 0.18);
+      background: rgba(78, 163, 255, 0.08);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .metric-value {
+      color: var(--white);
+      font-size: 1.02rem;
+      font-weight: 700;
+    }
+
     .title {
       font-family: "Georgia", "Times New Roman", serif;
       font-size: clamp(1.8rem, 5vw, 3rem);
       line-height: 1.15;
       margin: 0 0 12px;
-      color: var(--gold-soft);
+      color: var(--white);
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
       text-wrap: balance;
     }
 
@@ -159,7 +222,7 @@
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
-      margin-bottom: 16px;
+      margin-bottom: 0;
     }
 
     .input {
@@ -167,7 +230,7 @@
       padding: 12px 14px;
       border-radius: 12px;
       border: 1px solid rgba(255, 255, 255, 0.2);
-      background: rgba(6, 29, 37, 0.58);
+      background: rgba(9, 16, 29, 0.64);
       color: var(--white);
       outline: none;
       transition: border-color 200ms ease, box-shadow 200ms ease;
@@ -175,16 +238,16 @@
     }
 
     .input:focus {
-      border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(217, 183, 104, 0.25);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(78, 163, 255, 0.25);
     }
 
     .btn {
       border: none;
       border-radius: 12px;
       padding: 12px 18px;
-      color: #10313d;
-      background: linear-gradient(180deg, #f2ddbd, #d9ab70);
+      color: #08152a;
+      background: linear-gradient(180deg, #8dc6ff, #4f9dfa);
       font-weight: 700;
       cursor: pointer;
       transition: transform 160ms ease, box-shadow 180ms ease, filter 180ms ease;
@@ -196,7 +259,7 @@
     .btn:hover,
     .btn:focus-visible {
       transform: translateY(-1px);
-      box-shadow: 0 0 0 3px rgba(141, 219, 231, 0.22), 0 10px 25px rgba(141, 219, 231, 0.34);
+      box-shadow: 0 0 0 3px rgba(78, 163, 255, 0.24), 0 10px 25px rgba(78, 163, 255, 0.38);
       filter: brightness(1.03);
       outline: none;
     }
@@ -237,7 +300,7 @@
       height: 100%;
       width: 0%;
       border-radius: 999px;
-      background: linear-gradient(90deg, #78cad9, #f2ddbd);
+      background: linear-gradient(90deg, #3c82d8, #7fc5ff);
       transition: width 350ms ease;
     }
 
@@ -258,7 +321,7 @@
       width: 100%;
       text-align: left;
       border: 1px solid rgba(255, 255, 255, 0.2);
-      background: rgba(6, 27, 35, 0.7);
+      background: rgba(9, 17, 31, 0.74);
       color: var(--white);
       border-radius: 12px;
       padding: 12px 14px;
@@ -269,7 +332,7 @@
 
     .option:hover:not(:disabled),
     .option:focus-visible:not(:disabled) {
-      border-color: var(--gold);
+      border-color: var(--accent);
       transform: translateX(2px);
       outline: none;
     }
@@ -292,7 +355,7 @@
     .feedback {
       min-height: 28px;
       margin-top: 12px;
-      color: var(--gold-soft);
+      color: var(--accent-soft);
       font-size: 0.98rem;
       display: flex;
       align-items: center;
@@ -314,8 +377,8 @@
       padding: 6px 10px;
       border-radius: 999px;
       border: 1px solid rgba(255, 255, 255, 0.2);
-      background: rgba(141, 219, 231, 0.12);
-      color: var(--gold-soft);
+      background: rgba(78, 163, 255, 0.14);
+      color: var(--accent-soft);
       font-size: 0.85rem;
       margin-bottom: 8px;
     }
@@ -334,7 +397,7 @@
       display: grid;
       place-items: center;
       position: relative;
-      background: conic-gradient(var(--gold) 0deg, rgba(255, 255, 255, 0.15) 0deg);
+      background: conic-gradient(var(--accent) 0deg, rgba(255, 255, 255, 0.15) 0deg);
       box-shadow: inset 0 0 30px rgba(1, 5, 22, 0.45), 0 15px 35px rgba(0, 0, 0, 0.25);
     }
 
@@ -352,7 +415,7 @@
       z-index: 1;
       font-size: 2rem;
       font-weight: 800;
-      color: var(--gold-soft);
+      color: var(--accent-soft);
     }
 
     .footer-actions {
@@ -374,11 +437,72 @@
       width: 10px;
       height: 10px;
       border-radius: 50%;
-      background: var(--gold-soft);
-      box-shadow: 0 0 18px 8px rgba(242, 226, 181, 0.5);
+      background: var(--accent-soft);
+      box-shadow: 0 0 18px 8px rgba(127, 197, 255, 0.48);
       animation: burst 900ms ease-out forwards;
       pointer-events: none;
       z-index: 4;
+    }
+
+    .leaderboard {
+      width: 100%;
+      margin-top: 8px;
+      border: 1px solid rgba(127, 197, 255, 0.2);
+      border-radius: 14px;
+      background: rgba(10, 18, 31, 0.72);
+      overflow: hidden;
+    }
+
+    .leaderboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(127, 197, 255, 0.2);
+      color: var(--accent-soft);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .leaderboard-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      max-height: 220px;
+      overflow: auto;
+    }
+
+    .leaderboard-row {
+      display: grid;
+      grid-template-columns: 40px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--white);
+      font-size: 0.94rem;
+    }
+
+    .leaderboard-row:last-child {
+      border-bottom: none;
+    }
+
+    .leaderboard-rank {
+      color: var(--accent-soft);
+      font-weight: 800;
+    }
+
+    .leaderboard-score {
+      font-weight: 700;
+      color: var(--accent-soft);
+    }
+
+    .leaderboard-empty {
+      padding: 14px;
+      color: var(--muted);
+      text-align: left;
+      font-size: 0.92rem;
     }
 
     @keyframes reveal {
@@ -421,6 +545,10 @@
     }
 
     @media (max-width: 600px) {
+      .home-grid {
+        grid-template-columns: 1fr;
+      }
+
       .card {
         border-radius: 18px;
       }
@@ -455,17 +583,35 @@
   <main class="app">
     <section class="card" aria-live="polite">
       <div id="homeScreen" class="screen active">
-        <h1 class="title">EL Mahmud Family Quiz Night 🌙</h1>
-        <p class="subtitle">
-          Welcome to a joyful family quiz where grandparents, parents, uncles, aunts, cousins, nephews, and nieces all play together.
-        </p>
-        <div class="welcome-row">
-          <input id="guestName" class="input" type="text" maxlength="24" placeholder="Enter your name (optional)">
-          <button id="startBtn" class="btn" type="button">Start Quiz</button>
+        <div class="home-hero">
+          <span class="home-badge">Wedding Night Faceoff</span>
+          <h1 class="title">Muhammad & Rahma Groom Challenge 🌙</h1>
+          <p class="subtitle">
+            Friends, step into the groom arena. Answer fast, score high, and prove who really knows Muhammad best.
+          </p>
         </div>
-        <p class="subtitle" style="margin-bottom:0">
-          May Allah place barakah, laughter, and love in every family home.
-        </p>
+        <div class="home-grid">
+          <div class="home-panel">
+            <div class="welcome-row">
+              <input id="guestName" class="input" type="text" maxlength="24" placeholder="Enter your name or team name">
+              <button id="startBtn" class="btn" type="button">Enter Challenge</button>
+            </div>
+          </div>
+          <div class="home-metrics">
+            <div class="metric">
+              <div class="metric-label">Rounds</div>
+              <div class="metric-value">12 Questions</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Goal</div>
+              <div class="metric-value">Know The Groom Better Than Everyone</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Mode</div>
+              <div class="metric-value">Friends Competitive Quiz</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div id="quizScreen" class="screen">
@@ -482,12 +628,21 @@
 
       <div id="resultScreen" class="screen">
         <div class="result-wrap">
-          <h2 class="title" style="font-size:clamp(1.6rem,4.6vw,2.4rem);margin-bottom:2px">Quiz Complete ✨</h2>
+          <h2 class="title" style="font-size:clamp(1.6rem,4.6vw,2.4rem);margin-bottom:2px">Who Knows The Groom Best? ✨</h2>
           <div id="scoreRing" class="score-ring">
             <div id="scoreValue" class="score-text">0%</div>
           </div>
           <p id="resultMessage" class="subtitle" style="margin:0;max-width:45ch"></p>
+          <div class="leaderboard">
+            <div class="leaderboard-header">
+              <span>Leaderboard</span>
+              <span>Top Scores</span>
+            </div>
+            <ul id="leaderboardList" class="leaderboard-list"></ul>
+            <div id="leaderboardEmpty" class="leaderboard-empty">No scores yet. Finish a quiz to create the first record.</div>
+          </div>
           <div class="footer-actions">
+            <button id="downloadBtn" class="btn btn-secondary" type="button">Download Leaderboard</button>
             <button id="restartBtn" class="btn" type="button">Restart Quiz</button>
             <button id="homeBtn" class="btn btn-secondary" type="button">Back to Welcome</button>
           </div>
@@ -500,156 +655,159 @@
     const QUESTIONS = [
       {
         id: 1,
-        topic: "Family Adab",
-        question: "You arrive and see both elders and younger cousins. What is the most balanced first move?",
+        topic: "Groom Vibes",
+        question: "When Muhammad is running late for an event, what is he most likely to say in the group chat?",
         options: [
-          "Greet the nearest people first, then settle in quietly",
-          "Go directly to elders first, then greet everyone else later",
-          "Give a general salam to all and respectfully greet elders first",
-          "Wait for the host to invite greetings before approaching anyone"
-        ],
-        correctIndex: 3
-      },
-      {
-        id: 2,
-        topic: "Character Guess",
-        question: "During a long delay before dinner, who best shows sabr and husn al-khuluq (good character)?",
-        options: [
-          "Uncle Hamza",
-          "Aunt Khadija",
-          "Cousin Bilal",
-          "Nephew Yusuf"
+          "Cancel everything, I am not coming",
+          "Five minutes bro, parking is a test",
+          "Let's postpone to next week",
+          "Someone else lead, I am offline"
         ],
         correctIndex: 1
       },
       {
-        id: 3,
-        topic: "Islamic Manners",
-        question: "A disagreement starts between two relatives. Which response is closest to Islamic adab?",
+        id: 2,
+        topic: "Wedding Edition",
+        question: "Who would Muhammad call first for last-minute wedding logistics?",
         options: [
-          "Stay neutral and avoid involvement completely",
-          "Defend the person you know best so it ends quickly",
-          "Lower tension, speak gently, and redirect to respectful words",
-          "Suggest pausing the topic and revisiting it after dessert"
+          "Ibrahim",
+          "Yusuf",
+          "Hamza",
+          "Bilal"
         ],
         correctIndex: 2
       },
       {
+        id: 3,
+        topic: "Daily Routine",
+        question: "Which choice best matches Muhammad's weekend style?",
+        options: [
+          "Sleep all day and ignore messages",
+          "Gym, friends, and family visit if time allows",
+          "Only work calls and no social plans",
+          "Road trip every single weekend"
+        ],
+        correctIndex: 1
+      },
+      {
         id: 4,
         topic: "Character Guess",
-        question: "Who best reflects generosity without showing off?",
+        question: "Who usually understands Muhammad's jokes the fastest?",
         options: [
-          "Grandpa Suleiman",
-          "Cousin Maryam",
-          "Niece Sara",
-          "Uncle Ibrahim"
+          "Umar",
+          "Amin",
+          "Sulaiman",
+          "Rashid"
         ],
         correctIndex: 0
       },
       {
         id: 5,
-        topic: "Family Values",
-        question: "Which habit most consistently strengthens family bonds over time?",
+        topic: "Groom Facts",
+        question: "If Muhammad had to pick one late-night snack, what is most likely?",
         options: [
-          "Meeting at major events and keeping communication practical",
-          "Checking in regularly, forgiving quickly, and making dua",
-          "Giving relatives space unless they ask for support",
-          "Addressing issues immediately, even if the tone is firm"
+          "Fruit bowl and tea",
+          "Fries with spicy sauce",
+          "Protein shake only",
+          "No snack, straight to sleep"
         ],
         correctIndex: 1
       },
       {
         id: 6,
         topic: "Character Guess",
-        question: "Who displays humility in conversation?",
+        question: "Which friend is most likely to know Muhammad's exact coffee order?",
         options: [
-          "Aunt Safiya",
-          "Nephew Zayd",
-          "Cousin Amina",
-          "Uncle Rashid"
+          "Zayd",
+          "Khalid",
+          "Naeem",
+          "Tariq"
         ],
-        correctIndex: 2
+        correctIndex: 3
       },
       {
         id: 7,
-        topic: "Sunnah Spirit",
-        question: "Food is limited and many guests are still waiting. What is the best choice?",
+        topic: "Rahma & Muhammad",
+        question: "What would Muhammad most likely choose for a calm evening with Rahma?",
         options: [
-          "Take a normal portion now and avoid second helpings",
-          "Wait calmly and help others get served first",
-          "Ask the host quietly if more food is coming before serving",
-          "Serve your close family first to keep children settled"
+          "Loud football watch party",
+          "Quiet dinner and a walk",
+          "Gaming tournament with friends",
+          "Endless shopping challenge"
         ],
         correctIndex: 1
       },
       {
         id: 8,
         topic: "Character Guess",
-        question: "After the meal, who shows gratitude in the best way?",
+        question: "If Muhammad's phone dies, who likely knows where he is?",
         options: [
-          "Cousin Haris",
-          "Niece Lina",
-          "Grandma Fatimah",
-          "Uncle Nabil"
+          "Fahad",
+          "Ilyas",
+          "Samir",
+          "Rayan"
         ],
-        correctIndex: 2
+        correctIndex: 0
       },
       {
         id: 9,
-        topic: "Family Fun",
-        question: "A game round is disputed. Which action keeps fun and fairness together?",
+        topic: "Groom Personality",
+        question: "Which trait does Muhammad's close circle mention most?",
         options: [
-          "Choose a neutral judge and replay the round calmly",
-          "Let both teams vote and accept majority decision",
-          "Skip this point and continue to keep the mood light",
-          "Allow elders to decide immediately to avoid delay"
+          "Always serious, rarely jokes",
+          "Calm under pressure and reliable",
+          "Never replies to anyone",
+          "Avoids every responsibility"
         ],
-        correctIndex: 0
+        correctIndex: 1
       },
       {
         id: 10,
         topic: "Character Guess",
-        question: "A child loses an envelope with money. Who best demonstrates amanah (trustworthiness)?",
+        question: "Who is most likely Muhammad's partner for random late-night food runs?",
         options: [
-          "Aunt Zainab",
-          "Nephew Idris",
-          "Uncle Musa",
-          "Cousin Rayyan"
+          "Adnan",
+          "Hamid",
+          "Yunus",
+          "Faris"
         ],
-        correctIndex: 0
+        correctIndex: 2
       },
       {
         id: 11,
-        topic: "Good Speech",
-        question: "Which style of speech is most suitable for a joyful Islamic family gathering?",
+        topic: "Inside Knowledge",
+        question: "Which answer sounds most like Muhammad when plans change suddenly?",
         options: [
-          "Playful but respectful words, free from mockery and gossip",
-          "Honest speech, including blunt jokes, as long as no one objects",
-          "Advising people openly so everyone can learn together",
-          "Light teasing between close relatives to keep conversations lively"
+          "Forget it, we are done",
+          "No stress, we adapt and move",
+          "I will answer tomorrow",
+          "Just do what you want"
         ],
-        correctIndex: 0
+        correctIndex: 1
       },
       {
         id: 12,
-        topic: "Character Guess",
-        question: "Who shows real leadership with adab during the evening?",
+        topic: "Final Challenge",
+        question: "If there is one friend who can prove they know Muhammad best tonight, who is it?",
         options: [
-          "Nephew Adam",
-          "Uncle Farooq",
-          "Aunt Ruqayyah",
-          "Cousin Sumayyah"
+          "Imran",
+          "Saeed",
+          "Omar",
+          "You - if your score is highest"
         ],
-        correctIndex: 2
+        correctIndex: 3
       }
     ];
+
+    const STORAGE_KEY = "muhammad_rahma_groom_quiz_leaderboard";
 
     const state = {
       currentIndex: 0,
       score: 0,
       answersLocked: false,
       userName: "",
-      questions: []
+      questions: [],
+      leaderboard: []
     };
 
     const ui = {
@@ -668,20 +826,23 @@
       scoreRing: document.getElementById("scoreRing"),
       scoreValue: document.getElementById("scoreValue"),
       resultMessage: document.getElementById("resultMessage"),
+      leaderboardList: document.getElementById("leaderboardList"),
+      leaderboardEmpty: document.getElementById("leaderboardEmpty"),
+      downloadBtn: document.getElementById("downloadBtn"),
       restartBtn: document.getElementById("restartBtn"),
       homeBtn: document.getElementById("homeBtn")
     };
 
     const FEEDBACK_TEXT = {
       correct: [
-        "MashaAllah, beautiful answer 🌿",
-        "Excellent! May Allah increase your knowledge 🌿",
-        "Wonderful effort - keep shining in goodness ✨"
+        "Correct! You really know the groom 🔥",
+        "Nice one - that's proper inner-circle knowledge 👏",
+        "Point taken. Wedding IQ is rising ✨"
       ],
       wrong: [
-        "Good try, keep learning 🤍",
-        "A gentle reminder - every step in knowledge is rewarded 🌙",
-        "No worries, growth comes with every question 🌿"
+        "Not this one - someone else knows him better 😄",
+        "Close, but the groom squad saw through that one 👀",
+        "No stress, next question can still save your rank 💪"
       ]
     };
 
@@ -726,6 +887,79 @@
 
     function randomFrom(list) {
       return list[Math.floor(Math.random() * list.length)];
+    }
+
+    function loadLeaderboard() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        state.leaderboard = Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        state.leaderboard = [];
+      }
+    }
+
+    function saveLeaderboard() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.leaderboard));
+    }
+
+    function updateLeaderboard(name, score, total) {
+      const percent = Math.round((score / total) * 100);
+      state.leaderboard.push({
+        name,
+        score,
+        total,
+        percent,
+        playedAt: new Date().toISOString()
+      });
+
+      state.leaderboard.sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        if (b.percent !== a.percent) return b.percent - a.percent;
+        return new Date(b.playedAt) - new Date(a.playedAt);
+      });
+
+      state.leaderboard = state.leaderboard.slice(0, 25);
+      saveLeaderboard();
+    }
+
+    function renderLeaderboard() {
+      ui.leaderboardList.innerHTML = "";
+      if (state.leaderboard.length === 0) {
+        ui.leaderboardEmpty.style.display = "block";
+        return;
+      }
+
+      ui.leaderboardEmpty.style.display = "none";
+      state.leaderboard.forEach((entry, index) => {
+        const row = document.createElement("li");
+        row.className = "leaderboard-row";
+        row.innerHTML = `
+          <span class="leaderboard-rank">#${index + 1}</span>
+          <span>${entry.name}</span>
+          <span class="leaderboard-score">${entry.score}/${entry.total}</span>
+        `;
+        ui.leaderboardList.appendChild(row);
+      });
+    }
+
+    function downloadLeaderboard() {
+      if (state.leaderboard.length === 0) return;
+      const header = "Rank,Name,Score,Total,Percent,PlayedAt";
+      const rows = state.leaderboard.map((entry, index) => {
+        const safeName = `"${String(entry.name).replaceAll("\"", "\"\"")}"`;
+        return `${index + 1},${safeName},${entry.score},${entry.total},${entry.percent},${entry.playedAt}`;
+      });
+      const csv = [header, ...rows].join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "groom-quiz-leaderboard.csv";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
     }
 
     function resetState() {
@@ -830,7 +1064,7 @@
         const value = Math.round(percent * eased);
         const degrees = Math.round((value / 100) * 360);
         ui.scoreValue.textContent = `${value}%`;
-        ui.scoreRing.style.background = `conic-gradient(var(--gold) ${degrees}deg, rgba(255,255,255,0.15) ${degrees}deg)`;
+        ui.scoreRing.style.background = `conic-gradient(var(--accent) ${degrees}deg, rgba(255,255,255,0.15) ${degrees}deg)`;
 
         if (progress < 1) {
           requestAnimationFrame(frame);
@@ -866,22 +1100,24 @@
       makeBurst();
 
       const name = state.userName || "Guest";
-      let message = `May Allah bless your knowledge, ${name} 🌙 You scored ${state.score} out of ${total}.`;
+      let message = `${name}, you scored ${state.score} out of ${total}.`;
 
       if (percent >= 85) {
-        message += " MashaAllah, excellent understanding and beautiful effort.";
+        message += " Certified Groom Expert. Muhammad's close circle should be worried.";
       } else if (percent >= 60) {
-        message += " Great effort, may Allah increase you in beneficial knowledge.";
+        message += " Strong performance. You definitely know Muhammad well.";
       } else {
-        message += " Every answer is a step in learning. Keep going with a sincere heart.";
+        message += " Fun effort - but you need more groom stories before round two.";
       }
 
       ui.resultMessage.textContent = message;
+      updateLeaderboard(name, state.score, total);
+      renderLeaderboard();
     }
 
     function backToHome() {
       setActiveScreen(ui.homeScreen);
-      ui.scoreRing.style.background = "conic-gradient(var(--gold) 0deg, rgba(255, 255, 255, 0.15) 0deg)";
+      ui.scoreRing.style.background = "conic-gradient(var(--accent) 0deg, rgba(255, 255, 255, 0.15) 0deg)";
       ui.scoreValue.textContent = "0%";
     }
 
@@ -925,9 +1161,15 @@
 
     function init() {
       initStars();
+      loadLeaderboard();
+      renderLeaderboard();
       ui.startBtn.addEventListener("click", (event) => {
         createRipple(event);
         startQuiz();
+      });
+      ui.downloadBtn.addEventListener("click", (event) => {
+        createRipple(event);
+        downloadLeaderboard();
       });
       ui.restartBtn.addEventListener("click", (event) => {
         createRipple(event);
