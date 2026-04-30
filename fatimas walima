@@ -1,0 +1,874 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fatima's Walima Islamic Quiz</title>
+  <style>
+    :root {
+      --bg-1: #07122d;
+      --bg-2: #0c1d46;
+      --bg-3: #122960;
+      --gold: #d9b768;
+      --gold-soft: #f0deaa;
+      --white: #f6f8ff;
+      --muted: #c8d0ea;
+      --glass: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.15);
+      --ok: #9fd6a7;
+      --bad: #f2c6c6;
+      --shadow: 0 20px 60px rgba(1, 5, 22, 0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      height: 100%;
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+      color: var(--white);
+      background: radial-gradient(circle at 20% 15%, rgba(238, 207, 138, 0.1), transparent 40%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.08), transparent 35%),
+        linear-gradient(130deg, var(--bg-1), var(--bg-2), var(--bg-3));
+      overflow-x: hidden;
+    }
+
+    body {
+      position: relative;
+      min-height: 100vh;
+    }
+
+    .geometry {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(60deg, rgba(217, 183, 104, 0.08) 1px, transparent 1px),
+        linear-gradient(-60deg, rgba(217, 183, 104, 0.08) 1px, transparent 1px);
+      background-size: 42px 42px;
+      opacity: 0.18;
+      mask-image: radial-gradient(circle at center, black 20%, transparent 80%);
+    }
+
+    .orbs {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .orb {
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      filter: blur(30px);
+      opacity: 0.14;
+      animation: floatOrb linear infinite;
+    }
+
+    .orb.one {
+      background: #f5d07b;
+      top: 8%;
+      left: -70px;
+      animation-duration: 21s;
+    }
+
+    .orb.two {
+      background: #9ab4ff;
+      top: 52%;
+      right: -100px;
+      animation-duration: 25s;
+    }
+
+    .orb.three {
+      background: #f7e4b5;
+      bottom: -80px;
+      left: 30%;
+      animation-duration: 27s;
+    }
+
+    #stars {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .app {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .card {
+      width: min(760px, 94vw);
+      background: var(--glass);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow);
+      border-radius: 24px;
+      padding: clamp(22px, 4vw, 36px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      background: linear-gradient(120deg, rgba(217, 183, 104, 0.3), transparent 35%, rgba(255, 255, 255, 0.08));
+      border-radius: 24px;
+      pointer-events: none;
+    }
+
+    .screen {
+      display: none;
+      animation: reveal 550ms ease both;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .title {
+      font-family: "Georgia", "Times New Roman", serif;
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      line-height: 1.15;
+      margin: 0 0 12px;
+      color: var(--gold-soft);
+      text-wrap: balance;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin: 0 0 24px;
+      font-size: clamp(1rem, 2.5vw, 1.1rem);
+      line-height: 1.6;
+    }
+
+    .welcome-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .input {
+      flex: 1 1 220px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(10, 19, 46, 0.55);
+      color: var(--white);
+      outline: none;
+      transition: border-color 200ms ease, box-shadow 200ms ease;
+      font-size: 1rem;
+    }
+
+    .input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(217, 183, 104, 0.25);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      color: #13203f;
+      background: linear-gradient(180deg, #f4dea5, #d8b86a);
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 180ms ease, filter 180ms ease;
+      position: relative;
+      overflow: hidden;
+      font-size: 1rem;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      transform: translateY(-1px);
+      box-shadow: 0 0 0 3px rgba(217, 183, 104, 0.2), 0 10px 25px rgba(217, 183, 104, 0.35);
+      filter: brightness(1.03);
+      outline: none;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      transform: scale(0);
+      animation: ripple 520ms linear;
+      background: rgba(255, 255, 255, 0.65);
+      pointer-events: none;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 14px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .progress-wrap {
+      height: 8px;
+      width: 100%;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .progress {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #c49d45, #f2e2b5);
+      transition: width 350ms ease;
+    }
+
+    .question {
+      font-size: clamp(1.1rem, 2.8vw, 1.35rem);
+      font-weight: 700;
+      margin: 8px 0 16px;
+      line-height: 1.45;
+      text-wrap: balance;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+    }
+
+    .option {
+      width: 100%;
+      text-align: left;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(6, 14, 38, 0.66);
+      color: var(--white);
+      border-radius: 12px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: border-color 160ms ease, transform 150ms ease, background 200ms ease;
+      font-size: 0.98rem;
+    }
+
+    .option:hover:not(:disabled),
+    .option:focus-visible:not(:disabled) {
+      border-color: var(--gold);
+      transform: translateX(2px);
+      outline: none;
+    }
+
+    .option:disabled {
+      cursor: not-allowed;
+      opacity: 0.95;
+    }
+
+    .option.correct {
+      background: rgba(80, 148, 91, 0.26);
+      border-color: var(--ok);
+    }
+
+    .option.wrong {
+      background: rgba(181, 113, 113, 0.22);
+      border-color: var(--bad);
+    }
+
+    .feedback {
+      min-height: 28px;
+      margin-top: 12px;
+      color: var(--gold-soft);
+      font-size: 0.98rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      transform: translateY(3px);
+      transition: opacity 220ms ease, transform 220ms ease;
+    }
+
+    .feedback.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(217, 183, 104, 0.12);
+      color: var(--gold-soft);
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+    }
+
+    .result-wrap {
+      display: grid;
+      place-items: center;
+      text-align: center;
+      gap: 14px;
+    }
+
+    .score-ring {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      position: relative;
+      background: conic-gradient(var(--gold) 0deg, rgba(255, 255, 255, 0.15) 0deg);
+      box-shadow: inset 0 0 30px rgba(1, 5, 22, 0.45), 0 15px 35px rgba(0, 0, 0, 0.25);
+    }
+
+    .score-ring::after {
+      content: "";
+      position: absolute;
+      inset: 14px;
+      border-radius: 50%;
+      background: rgba(9, 18, 44, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .score-text {
+      position: relative;
+      z-index: 1;
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--gold-soft);
+    }
+
+    .footer-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--white);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .glow-burst {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--gold-soft);
+      box-shadow: 0 0 18px 8px rgba(242, 226, 181, 0.5);
+      animation: burst 900ms ease-out forwards;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    @keyframes reveal {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.985);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes ripple {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    @keyframes floatOrb {
+      0%,
+      100% {
+        transform: translateY(0px) translateX(0px);
+      }
+      50% {
+        transform: translateY(-24px) translateX(16px);
+      }
+    }
+
+    @keyframes burst {
+      0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(var(--tx), var(--ty)) scale(0.2);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        border-radius: 18px;
+      }
+
+      .score-ring {
+        width: 140px;
+        height: 140px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 1ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stars" aria-hidden="true"></canvas>
+  <div class="geometry" aria-hidden="true"></div>
+  <div class="orbs" aria-hidden="true">
+    <div class="orb one"></div>
+    <div class="orb two"></div>
+    <div class="orb three"></div>
+  </div>
+
+  <main class="app">
+    <section class="card" aria-live="polite">
+      <div id="homeScreen" class="screen active">
+        <h1 class="title">Fatima's Walima Islamic Quiz 🌙</h1>
+        <p class="subtitle">
+          Welcome to a joyful quiz experience celebrating knowledge, adab, and the beauty of Islamic values.
+        </p>
+        <div class="welcome-row">
+          <input id="guestName" class="input" type="text" maxlength="24" placeholder="Enter your name (optional)">
+          <button id="startBtn" class="btn" type="button">Start Quiz</button>
+        </div>
+        <p class="subtitle" style="margin-bottom:0">
+          May Allah increase us all in beneficial knowledge and barakah.
+        </p>
+      </div>
+
+      <div id="quizScreen" class="screen">
+        <div class="top-bar">
+          <span id="progressText">Question 1 / 12</span>
+          <span id="scoreText">Score: 0</span>
+        </div>
+        <div class="progress-wrap"><div id="progressBar" class="progress"></div></div>
+        <div id="topicChip" class="chip">Topic</div>
+        <h2 id="questionText" class="question"></h2>
+        <div id="options" class="options"></div>
+        <div id="feedback" class="feedback"></div>
+      </div>
+
+      <div id="resultScreen" class="screen">
+        <div class="result-wrap">
+          <h2 class="title" style="font-size:clamp(1.6rem,4.6vw,2.4rem);margin-bottom:2px">Quiz Complete ✨</h2>
+          <div id="scoreRing" class="score-ring">
+            <div id="scoreValue" class="score-text">0%</div>
+          </div>
+          <p id="resultMessage" class="subtitle" style="margin:0;max-width:45ch"></p>
+          <div class="footer-actions">
+            <button id="restartBtn" class="btn" type="button">Restart Quiz</button>
+            <button id="homeBtn" class="btn btn-secondary" type="button">Back to Welcome</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const QUESTIONS = [
+      {
+        id: 1,
+        topic: "Adab",
+        question: "Which action reflects good Islamic adab when greeting others?",
+        options: ["Ignoring people quietly", "Giving salam with a smile", "Waiting for others to greet first always", "Only greeting close friends"],
+        correctIndex: 1
+      },
+      {
+        id: 2,
+        topic: "Marriage",
+        question: "What is a key purpose of marriage in Islam?",
+        options: ["Showing wealth to society", "Building tranquility, mercy, and companionship", "Avoiding all responsibilities", "Competing with others"],
+        correctIndex: 1
+      },
+      {
+        id: 3,
+        topic: "Walima",
+        question: "The Walima is best understood as:",
+        options: ["A private legal document", "A post-marriage celebratory meal with gratitude", "An obligatory annual event", "A cultural event with no Islamic value"],
+        correctIndex: 1
+      },
+      {
+        id: 4,
+        topic: "Sunnah",
+        question: "In daily life, following the Sunnah mainly means:",
+        options: ["Only reading historical stories", "Trying to practice the Prophet's guidance in character and actions", "Focusing only on dress style", "Copying others without understanding"],
+        correctIndex: 1
+      },
+      {
+        id: 5,
+        topic: "Family Values",
+        question: "Which value strengthens family ties according to Islamic teachings?",
+        options: ["Harsh criticism in public", "Cutting ties over small issues", "Patience, forgiveness, and kindness", "Avoiding communication"],
+        correctIndex: 2
+      },
+      {
+        id: 6,
+        topic: "Adab",
+        question: "When someone speaks, what is the best Islamic manner?",
+        options: ["Interrupt quickly", "Listen attentively and respond respectfully", "Look away and stay distracted", "Laugh at mistakes"],
+        correctIndex: 1
+      },
+      {
+        id: 7,
+        topic: "Marriage",
+        question: "Mutual rights and responsibilities in marriage are based on:",
+        options: ["Compassion, fairness, and taqwa", "Social status only", "One-sided control", "Public opinion alone"],
+        correctIndex: 0
+      },
+      {
+        id: 8,
+        topic: "Walima",
+        question: "A beautiful spirit of Walima includes:",
+        options: ["Waste and extravagance", "Gratitude to Allah and sharing joy with others", "Excluding people intentionally", "Competing for luxury"],
+        correctIndex: 1
+      },
+      {
+        id: 9,
+        topic: "Sunnah",
+        question: "How should we respond when we do not know an Islamic answer?",
+        options: ["Guess confidently", "Say 'I don't know' and seek knowledge", "Argue loudly", "Avoid learning"],
+        correctIndex: 1
+      },
+      {
+        id: 10,
+        topic: "Values",
+        question: "What is one way to show gratitude in Islam?",
+        options: ["Complaining constantly", "Ignoring blessings", "Thanking Allah and using blessings well", "Comparing ourselves negatively"],
+        correctIndex: 2
+      },
+      {
+        id: 11,
+        topic: "Adab",
+        question: "Which statement best reflects Islamic speech etiquette?",
+        options: ["Speak truth with kindness", "Say whatever feels good", "Mocking can be fun", "Loud speech is always better"],
+        correctIndex: 0
+      },
+      {
+        id: 12,
+        topic: "Family Values",
+        question: "What helps keep a home filled with mercy?",
+        options: ["Frequent blame", "Silent resentment", "Dua, gentle communication, and respect", "Ignoring each other"],
+        correctIndex: 2
+      }
+    ];
+
+    const state = {
+      currentIndex: 0,
+      score: 0,
+      answersLocked: false,
+      userName: "",
+      questions: []
+    };
+
+    const ui = {
+      homeScreen: document.getElementById("homeScreen"),
+      quizScreen: document.getElementById("quizScreen"),
+      resultScreen: document.getElementById("resultScreen"),
+      guestName: document.getElementById("guestName"),
+      startBtn: document.getElementById("startBtn"),
+      progressText: document.getElementById("progressText"),
+      scoreText: document.getElementById("scoreText"),
+      progressBar: document.getElementById("progressBar"),
+      topicChip: document.getElementById("topicChip"),
+      questionText: document.getElementById("questionText"),
+      options: document.getElementById("options"),
+      feedback: document.getElementById("feedback"),
+      scoreRing: document.getElementById("scoreRing"),
+      scoreValue: document.getElementById("scoreValue"),
+      resultMessage: document.getElementById("resultMessage"),
+      restartBtn: document.getElementById("restartBtn"),
+      homeBtn: document.getElementById("homeBtn")
+    };
+
+    const FEEDBACK_TEXT = {
+      correct: [
+        "MashaAllah, beautiful answer 🌿",
+        "Excellent! May Allah increase your knowledge 🌿",
+        "Wonderful effort - keep shining in goodness ✨"
+      ],
+      wrong: [
+        "Good try, keep learning 🤍",
+        "A gentle reminder - every step in knowledge is rewarded 🌙",
+        "No worries, growth comes with every question 🌿"
+      ]
+    };
+
+    function shuffle(array) {
+      const clone = [...array];
+      for (let i = clone.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [clone[i], clone[j]] = [clone[j], clone[i]];
+      }
+      return clone;
+    }
+
+    function setActiveScreen(screenEl) {
+      [ui.homeScreen, ui.quizScreen, ui.resultScreen].forEach((screen) => screen.classList.remove("active"));
+      screenEl.classList.add("active");
+    }
+
+    function createRipple(event) {
+      const button = event.currentTarget;
+      const rect = button.getBoundingClientRect();
+      const circle = document.createElement("span");
+      const size = Math.max(rect.width, rect.height);
+      circle.className = "ripple";
+      circle.style.width = `${size}px`;
+      circle.style.height = `${size}px`;
+      circle.style.left = `${event.clientX - rect.left - size / 2}px`;
+      circle.style.top = `${event.clientY - rect.top - size / 2}px`;
+      button.appendChild(circle);
+      window.setTimeout(() => circle.remove(), 520);
+    }
+
+    function randomFrom(list) {
+      return list[Math.floor(Math.random() * list.length)];
+    }
+
+    function resetState() {
+      state.currentIndex = 0;
+      state.score = 0;
+      state.answersLocked = false;
+      state.questions = shuffle(QUESTIONS);
+      ui.feedback.textContent = "";
+      ui.feedback.classList.remove("show");
+    }
+
+    function startQuiz() {
+      resetState();
+      state.userName = ui.guestName.value.trim();
+      setActiveScreen(ui.quizScreen);
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const question = state.questions[state.currentIndex];
+      const total = state.questions.length;
+      const progressPct = ((state.currentIndex + 1) / total) * 100;
+
+      ui.progressText.textContent = `Question ${state.currentIndex + 1} / ${total}`;
+      ui.scoreText.textContent = `Score: ${state.score}`;
+      ui.progressBar.style.width = `${progressPct}%`;
+      ui.topicChip.textContent = question.topic;
+      ui.questionText.textContent = question.question;
+      ui.options.innerHTML = "";
+      ui.feedback.textContent = "";
+      ui.feedback.classList.remove("show");
+      state.answersLocked = false;
+
+      question.options.forEach((optionText, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "option";
+        button.textContent = optionText;
+        button.setAttribute("aria-label", `Option ${index + 1}: ${optionText}`);
+        button.addEventListener("click", () => handleAnswer(index));
+        ui.options.appendChild(button);
+      });
+    }
+
+    function showFeedback(isCorrect) {
+      ui.feedback.textContent = isCorrect ? randomFrom(FEEDBACK_TEXT.correct) : randomFrom(FEEDBACK_TEXT.wrong);
+      ui.feedback.classList.add("show");
+    }
+
+    function lockOptions() {
+      const buttons = ui.options.querySelectorAll(".option");
+      buttons.forEach((button) => {
+        button.disabled = true;
+      });
+    }
+
+    function highlightAnswers(correctIndex, selectedIndex) {
+      const buttons = ui.options.querySelectorAll(".option");
+      buttons.forEach((button, index) => {
+        if (index === correctIndex) {
+          button.classList.add("correct");
+        } else if (index === selectedIndex) {
+          button.classList.add("wrong");
+        }
+      });
+    }
+
+    function handleAnswer(selectedIndex) {
+      if (state.answersLocked) return;
+      state.answersLocked = true;
+
+      const question = state.questions[state.currentIndex];
+      const isCorrect = selectedIndex === question.correctIndex;
+
+      if (isCorrect) {
+        state.score += 1;
+        ui.scoreText.textContent = `Score: ${state.score}`;
+      }
+
+      lockOptions();
+      highlightAnswers(question.correctIndex, selectedIndex);
+      showFeedback(isCorrect);
+
+      window.setTimeout(() => {
+        state.currentIndex += 1;
+        if (state.currentIndex >= state.questions.length) {
+          renderResult();
+        } else {
+          renderQuestion();
+        }
+      }, 1100);
+    }
+
+    function animateScore(percent) {
+      const duration = 950;
+      const start = performance.now();
+
+      function frame(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const value = Math.round(percent * eased);
+        const degrees = Math.round((value / 100) * 360);
+        ui.scoreValue.textContent = `${value}%`;
+        ui.scoreRing.style.background = `conic-gradient(var(--gold) ${degrees}deg, rgba(255,255,255,0.15) ${degrees}deg)`;
+
+        if (progress < 1) {
+          requestAnimationFrame(frame);
+        }
+      }
+
+      requestAnimationFrame(frame);
+    }
+
+    function makeBurst() {
+      const card = document.querySelector(".card");
+      const pieces = 14;
+      for (let i = 0; i < pieces; i += 1) {
+        const dot = document.createElement("span");
+        dot.className = "glow-burst";
+        const angle = (Math.PI * 2 * i) / pieces;
+        const distance = 70 + Math.random() * 65;
+        dot.style.left = "50%";
+        dot.style.top = "44%";
+        dot.style.setProperty("--tx", `${Math.cos(angle) * distance}px`);
+        dot.style.setProperty("--ty", `${Math.sin(angle) * distance}px`);
+        card.appendChild(dot);
+        window.setTimeout(() => dot.remove(), 920);
+      }
+    }
+
+    function renderResult() {
+      setActiveScreen(ui.resultScreen);
+      const total = state.questions.length;
+      const percent = Math.round((state.score / total) * 100);
+
+      animateScore(percent);
+      makeBurst();
+
+      const name = state.userName || "Guest";
+      let message = `May Allah bless your knowledge, ${name} 🌙 You scored ${state.score} out of ${total}.`;
+
+      if (percent >= 85) {
+        message += " MashaAllah, excellent understanding and beautiful effort.";
+      } else if (percent >= 60) {
+        message += " Great effort, may Allah increase you in beneficial knowledge.";
+      } else {
+        message += " Every answer is a step in learning. Keep going with a sincere heart.";
+      }
+
+      ui.resultMessage.textContent = message;
+    }
+
+    function backToHome() {
+      setActiveScreen(ui.homeScreen);
+      ui.scoreRing.style.background = "conic-gradient(var(--gold) 0deg, rgba(255, 255, 255, 0.15) 0deg)";
+      ui.scoreValue.textContent = "0%";
+    }
+
+    function initStars() {
+      const canvas = document.getElementById("stars");
+      const ctx = canvas.getContext("2d");
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let stars = [];
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const count = Math.min(120, Math.round((canvas.width * canvas.height) / 12000));
+        stars = Array.from({ length: count }, () => ({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.6 + 0.4,
+          a: Math.random() * 0.6 + 0.2,
+          drift: (Math.random() - 0.5) * 0.08
+        }));
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (const star of stars) {
+          star.x += star.drift;
+          if (star.x < 0) star.x = canvas.width;
+          if (star.x > canvas.width) star.x = 0;
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(255, 247, 220, ${star.a})`;
+          ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        if (!reducedMotion) requestAnimationFrame(draw);
+      }
+
+      resize();
+      draw();
+      window.addEventListener("resize", resize);
+    }
+
+    function init() {
+      initStars();
+      ui.startBtn.addEventListener("click", (event) => {
+        createRipple(event);
+        startQuiz();
+      });
+      ui.restartBtn.addEventListener("click", (event) => {
+        createRipple(event);
+        startQuiz();
+      });
+      ui.homeBtn.addEventListener("click", (event) => {
+        createRipple(event);
+        backToHome();
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>
