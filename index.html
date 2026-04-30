@@ -28,7 +28,7 @@
       background:
         radial-gradient(circle at 10% 10%, rgba(15, 122, 90, 0.09), transparent 36%),
         radial-gradient(circle at 90% 8%, rgba(201, 167, 95, 0.12), transparent 28%),
-        linear-gradient(180deg, #ffffff, var(--bg));
+        linear-gradient(180deg, #000000, var(--bg));
       overflow-x: hidden;
     }
 
@@ -179,6 +179,19 @@
       color: var(--muted);
       font-size: 0.92rem;
     }
+    .timer {
+      font-weight: 700;
+      color: #1f6a4f;
+      transition: color 180ms ease, transform 180ms ease;
+    }
+    .timer.warning {
+      color: #b06a1c;
+      transform: scale(1.04);
+    }
+    .timer.danger {
+      color: #b73f3f;
+      animation: timerPulse 600ms ease infinite;
+    }
     .progress-wrap {
       height: 8px;
       background: #e8f1ec;
@@ -302,7 +315,7 @@
       border-radius: 50%;
       transform: scale(0);
       animation: ripple 520ms linear;
-      background: rgba(255, 255, 255, 0.62);
+      background: rgba(0, 0, 0, 0.62);
       pointer-events: none;
     }
 
@@ -326,6 +339,7 @@
     @keyframes pop { 0% { transform: scale(0.98); } 55% { transform: scale(1.03); } 100% { transform: scale(1); } }
     @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
     @keyframes burst { from { transform: translate(0, 0) scale(1); opacity: 1; } to { transform: translate(var(--x), var(--y)) scale(0.1); opacity: 0; } }
+    @keyframes timerPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
@@ -344,16 +358,16 @@
   <main class="page">
     <section class="card" aria-live="polite">
       <div id="introScreen" class="screen active">
-        <span class="badge">Islamic Memorization Quiz</span>
-        <h1 class="title">Qur'an Hifz Challenge</h1>
-        <p class="subtitle">15 advanced questions designed for those who have memorized the Qur'an. Test your precision and rank on the leaderboard.</p>
+        <span class="badge">Islamic Memorization Quiz - Level 2</span>
+        <h1 class="title">Qur'an Hifz Challenge (Level 2)</h1>
+        <p class="subtitle">15 advanced hifz questions with a timer per question. Level 2 focuses on recall speed and precision under pressure.</p>
         <div class="row">
           <input id="playerName" class="input" type="text" maxlength="28" placeholder="Enter your name">
           <button id="startBtn" class="btn" type="button">Start Quiz</button>
         </div>
       </div>
       <div id="quizScreen" class="screen">
-        <div class="top"><span id="progressText">Question 1 / 15</span><span id="scoreText">Score: 0</span></div>
+        <div class="top"><span id="progressText">Question 1 / 15</span><span id="scoreText">Score: 0</span><span id="timerText" class="timer">20s</span></div>
         <div class="progress-wrap"><div id="progressBar" class="progress"></div></div>
         <span id="topicTag" class="topic">Hifz Detail</span>
         <h2 id="questionText" class="question"></h2>
@@ -397,11 +411,13 @@
       { topic: "Memorization", question: "Which surah is known as the 'heart of the Qur'an' in common narration usage?", options: ["Yasin", "Ar-Rahman", "Al-Waqi'ah", "Al-Mulk"], correctIndex: 0 }
     ];
 
-    const state = { index: 0, score: 0, locked: false, player: "", questions: [], leaderboard: [] };
+    const QUESTION_TIME = 20;
+    const state = { index: 0, score: 0, locked: false, player: "", questions: [], leaderboard: [], timeLeft: QUESTION_TIME, timerId: null };
     const ui = {
       intro: document.getElementById("introScreen"), quiz: document.getElementById("quizScreen"), result: document.getElementById("resultScreen"),
       playerName: document.getElementById("playerName"), startBtn: document.getElementById("startBtn"),
       progressText: document.getElementById("progressText"), scoreText: document.getElementById("scoreText"), progressBar: document.getElementById("progressBar"),
+      timerText: document.getElementById("timerText"),
       topicTag: document.getElementById("topicTag"), questionText: document.getElementById("questionText"), options: document.getElementById("options"), feedback: document.getElementById("feedback"),
       scoreValue: document.getElementById("scoreValue"), resultMessage: document.getElementById("resultMessage"),
       leaderboardList: document.getElementById("leaderboardList"), leaderboardEmpty: document.getElementById("leaderboardEmpty"),
@@ -550,9 +566,39 @@
       state.index = 0;
       state.score = 0;
       state.locked = false;
+      state.timeLeft = QUESTION_TIME;
+      if (state.timerId) { clearInterval(state.timerId); state.timerId = null; }
       state.questions = shuffle(QUESTIONS).map(prepareQuestion);
       ui.feedback.textContent = "";
       ui.feedback.classList.remove("show");
+    }
+
+    function updateTimerUI() {
+      ui.timerText.textContent = `${state.timeLeft}s`;
+      ui.timerText.classList.remove("warning", "danger");
+      if (state.timeLeft <= 10 && state.timeLeft > 5) ui.timerText.classList.add("warning");
+      if (state.timeLeft <= 5) ui.timerText.classList.add("danger");
+    }
+
+    function stopTimer() {
+      if (state.timerId) {
+        clearInterval(state.timerId);
+        state.timerId = null;
+      }
+    }
+
+    function startTimer() {
+      stopTimer();
+      state.timeLeft = QUESTION_TIME;
+      updateTimerUI();
+      state.timerId = setInterval(() => {
+        state.timeLeft -= 1;
+        updateTimerUI();
+        if (state.timeLeft <= 0) {
+          stopTimer();
+          handleTimeout();
+        }
+      }, 1000);
     }
 
     function startQuiz() {
@@ -574,6 +620,7 @@
       ui.feedback.textContent = "";
       ui.feedback.classList.remove("show");
       state.locked = false;
+      startTimer();
       q.options.forEach((text, i) => {
         const btn = document.createElement("button");
         btn.type = "button";
@@ -588,6 +635,7 @@
     function answer(selected) {
       if (state.locked) return;
       state.locked = true;
+      stopTimer();
       const q = state.questions[state.index];
       const correct = selected === q.correctIndex;
       const buttons = ui.options.querySelectorAll(".option");
@@ -612,7 +660,26 @@
       }, 900);
     }
 
+    function handleTimeout() {
+      if (state.locked) return;
+      state.locked = true;
+      const q = state.questions[state.index];
+      const buttons = ui.options.querySelectorAll(".option");
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (i === q.correctIndex) b.classList.add("correct");
+      });
+      ui.feedback.textContent = "Time up.";
+      ui.feedback.classList.add("show");
+      setTimeout(() => {
+        state.index += 1;
+        if (state.index >= state.questions.length) showResult();
+        else renderQuestion();
+      }, 900);
+    }
+
     function showResult() {
+      stopTimer();
       setScreen(ui.result);
       const total = state.questions.length;
       ui.scoreValue.textContent = `${state.score} / ${total}`;
