@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mubarak's 5th Birthday Quiz</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet"/>
+
+<style>
+:root{
+  --blue:#1e90ff;
+  --blue2:#0a6cff;
+  --cyan:#7ec8ff;
+  --dark:#05070c;
+  --card:#0d111a;
+  --text:#eaf4ff;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  background: radial-gradient(circle at top,#0b1020,#05070c);
+  color:var(--text);
+  font-family:Montserrat;
+  overflow:hidden;
+}
+
+/* ===== CINEMATIC BACKGROUND ===== */
+.bg{
+  position:fixed;
+  width:600px;height:600px;
+  border-radius:50%;
+  filter:blur(140px);
+  opacity:.18;
+  animation:float 10s ease-in-out infinite;
+}
+
+.bg1{background:var(--blue);top:-200px;left:-200px;}
+.bg2{background:#4fc3f7;bottom:-200px;right:-200px;animation-delay:2s;}
+.bg3{background:#60a5fa;top:40%;left:40%;width:400px;height:400px;animation-delay:4s;}
+
+@keyframes float{
+  0%,100%{transform:translateY(0) scale(1);}
+  50%{transform:translateY(-40px) scale(1.1);}
+}
+
+/* ===== APP ===== */
+#app{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+/* ===== SCREENS ===== */
+.screen{
+  display:none;
+  width:100%;
+  max-width:600px;
+  animation:fade .8s ease forwards;
+}
+
+.screen.active{display:block;}
+
+@keyframes fade{
+  from{opacity:0;transform:scale(.9) translateY(20px);}
+  to{opacity:1;transform:scale(1) translateY(0);}
+}
+
+/* ===== CARD ===== */
+.card{
+  background:rgba(13,17,26,.9);
+  border:1px solid rgba(30,144,255,.2);
+  border-radius:20px;
+  padding:40px;
+  text-align:center;
+  backdrop-filter:blur(20px);
+  box-shadow:0 0 60px rgba(30,144,255,.2);
+  position:relative;
+  overflow:hidden;
+}
+
+/* shimmer */
+.card::before{
+  content:"";
+  position:absolute;
+  width:200%;
+  height:200%;
+  top:-50%;
+  left:-50%;
+  background:linear-gradient(120deg,transparent,rgba(255,255,255,.08),transparent);
+  transform:rotate(25deg);
+  animation:shine 6s linear infinite;
+}
+
+@keyframes shine{
+  0%{transform:translateX(-100%) rotate(25deg);}
+  100%{transform:translateX(100%) rotate(25deg);}
+}
+
+/* ===== TITLE ===== */
+.title{
+  font-family:"Playfair Display";
+  font-size:2.6rem;
+  background:linear-gradient(90deg,var(--blue),var(--cyan));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:glow 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes glow{
+  from{filter:drop-shadow(0 0 10px rgba(30,144,255,.3));}
+  to{filter:drop-shadow(0 0 30px rgba(30,144,255,.8));}
+}
+
+/* ===== BUTTON ===== */
+.btn{
+  margin-top:20px;
+  padding:14px 40px;
+  border:none;
+  border-radius:50px;
+  background:linear-gradient(90deg,var(--blue),var(--blue2));
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+  transition:.3s;
+  box-shadow:0 10px 30px rgba(30,144,255,.3);
+}
+
+.btn:hover{
+  transform:scale(1.08);
+  box-shadow:0 0 40px rgba(30,144,255,.6);
+}
+
+/* ===== QUIZ ===== */
+#options-grid button{
+  width:100%;
+  margin:10px 0;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid rgba(30,144,255,.25);
+  background:#0a0f1c;
+  color:white;
+  cursor:pointer;
+  transition:.3s;
+}
+
+#options-grid button:hover{
+  background:rgba(30,144,255,.2);
+  transform:translateX(6px);
+}
+
+/* floating particles */
+.particle{
+  position:absolute;
+  font-size:1.2rem;
+  animation:rise 8s linear infinite;
+  opacity:.4;
+}
+
+@keyframes rise{
+  0%{transform:translateY(100vh);opacity:0;}
+  20%{opacity:.7;}
+  100%{transform:translateY(-20vh);opacity:0;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg bg1"></div>
+<div class="bg bg2"></div>
+<div class="bg bg3"></div>
+
+<div id="app">
+
+<!-- INTRO -->
+<div class="screen active" id="intro">
+  <div class="card">
+
+    <div class="particle" style="left:10%;animation-delay:0s;">🎈</div>
+    <div class="particle" style="left:50%;animation-delay:2s;">🎂</div>
+    <div class="particle" style="left:80%;animation-delay:4s;">✨</div>
+
+    <h1 class="title">Mubarak’s<br>5th Birthday Quiz 🎉</h1>
+    <p style="opacity:.7;margin-top:10px;">A cinematic birthday experience</p>
+
+    <button class="btn" onclick="startQuiz()">Start</button>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="screen" id="quiz">
+  <div class="card">
+    <h2 id="q-text"></h2>
+    <div id="options-grid"></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+
+/* ===== FIXED GLOBAL START FUNCTION ===== */
+window.startQuiz = function(){
+  current = 0;
+  render();
+  showScreen("quiz");
+};
+
+/* ===== SCREEN SWITCH ===== */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* ===== QUESTIONS ===== */
+const QUESTIONS=[
+{q:"What is Mubarak’s favourite cartoon?",options:["Mickey","Paw Patrol","Peppa Pig","Ben 10"],answer:1},
+{q:"How old is Mubarak turning?",options:["3","4","5","6"],answer:2},
+{q:"Favourite snack?",options:["Chips","Ice Cream","Chocolate","Cake"],answer:3},
+{q:"Favourite colour?",options:["Blue","Red","Green","Yellow"],answer:0},
+{q:"Favourite toy?",options:["Car","Doll","Blocks","Ball"],answer:3},
+{q:"What does he love most?",options:["Games","Sleep","Reading","Eating"],answer:0},
+{q:"Best friend?",options:["Ali","Omar","Zain","Noor"],answer:2},
+{q:"What makes him happiest?",options:["Toys","Cake","Family","Cartoons"],answer:2}
+];
+
+let current=0;
+
+/* ===== RENDER ===== */
+function render(){
+  const q=QUESTIONS[current];
+  document.getElementById("q-text").textContent=q.q;
+
+  const box=document.getElementById("options-grid");
+  box.innerHTML="";
+
+  q.options.forEach((o,i)=>{
+    const b=document.createElement("button");
+    b.textContent=o;
+
+    b.onclick=()=>{
+      current++;
+      if(current<QUESTIONS.length){
+        render();
+      }else{
+        showScreen("intro");
+        alert("🎉 Quiz Completed!");
+      }
+    };
+
+    box.appendChild(b);
+  });
+}
+
+</script>
+
+</body>
+</html>
