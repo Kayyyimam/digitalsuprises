@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Class of 2026 Graduation Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --gold: #d4af37;
+    --gold-light: #f5e07a;
+    --blue: #6ea8ff;
+    --cream: #faf3e8;
+    --dark: #090b16;
+    --card: rgba(12,16,35,0.94);
+    --border: rgba(255,255,255,0.08);
+    --muted: rgba(255,255,255,0.68);
+    --muted-strong: rgba(255,255,255,0.9);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body {
+    background: radial-gradient(circle at top left, rgba(126,193,255,0.18), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(212,175,55,0.12), transparent 22%),
+                linear-gradient(180deg, #06080f 0%, #090b16 100%);
+    color: var(--cream);
+    font-family: 'Montserrat', sans-serif;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  #sparkle-canvas,
+  #confetti-layer,
+  .blob { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .blob { border-radius: 50%; filter: blur(120px); opacity: 0.16; }
+  .blob-1 { width: 520px; height: 520px; background: rgba(110,168,255,0.35); top: -180px; left: -140px; }
+  .blob-2 { width: 420px; height: 420px; background: rgba(212,175,55,0.32); bottom: -140px; right: -100px; animation: float 18s ease-in-out infinite alternate; }
+  .blob-3 { width: 320px; height: 320px; background: rgba(112,195,255,0.26); top: 36%; left: 52%; animation: float 14s ease-in-out infinite alternate-reverse; }
+  @keyframes float { from { transform: translate(0,0) scale(1); } to { transform: translate(32px, 28px) scale(1.05); } }
+
+  #app { position: relative; z-index: 1; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 22px; }
+  .screen { display: none; width: 100%; max-width: 700px; animation: fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) both; }
+  .screen.active { display: flex; flex-direction: column; align-items: center; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
+  .card {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 44px 40px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 24px 70px rgba(0,0,0,0.35);
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 28px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.04), transparent 55%);
+    pointer-events: none;
+  }
+  .card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 28px;
+    background: radial-gradient(circle at top right, rgba(110,168,255,0.14), transparent 25%);
+    pointer-events: none;
+  }
+
+  .display-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.4rem, 6vw, 4.2rem);
+    font-weight: 800;
+    text-align: center;
+    line-height: 1.05;
+    background: linear-gradient(135deg, var(--blue), var(--gold-light), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+  .subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    text-align: center;
+    color: var(--muted);
+    margin-bottom: 22px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    color: var(--gold-light);
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .ornament { display: flex; align-items: center; gap: 12px; color: var(--gold); margin: 18px 0; width: 100%; justify-content: center; }
+  .ornament::before, .ornament::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(212,175,55,0.5), transparent); max-width: 130px; }
+
+  .btn-primary,
+  .btn-secondary { font-family: 'Montserrat', sans-serif; font-weight: 700; border-radius: 999px; cursor: pointer; transition: transform 0.22s ease, box-shadow 0.22s ease; }
+  .btn-primary { background: linear-gradient(135deg, var(--gold), #f1ce55); color: #111; border: none; padding: 16px 44px; box-shadow: 0 16px 35px rgba(212,175,55,0.26); }
+  .btn-secondary { background: rgba(255,255,255,0.06); color: var(--gold); border: 1px solid var(--gold); padding: 15px 34px; }
+  .btn-primary:hover, .btn-secondary:hover { transform: translateY(-2px); }
+
+  .input-group { width: 100%; margin-bottom: 26px; }
+  .input-label { display: block; font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+  .input-field { width: 100%; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: var(--cream); padding: 16px 18px; font-size: 1.05rem; outline: none; transition: border-color 0.3s ease, box-shadow 0.3s ease; }
+  .input-field:focus { border-color: var(--gold); box-shadow: 0 0 20px rgba(212,175,55,0.16); }
+  .input-field::placeholder { color: rgba(255,255,255,0.35); }
+
+  .progress-wrap { width: 100%; height: 10px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+  .progress-fill { width: 0; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--blue), var(--gold)); box-shadow: 0 0 22px rgba(110,168,255,0.35); transition: width 0.75s cubic-bezier(0.22,1,0.36,1); }
+
+  .question-counter { font-size: 0.76rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); text-align: center; margin-bottom: 8px; }
+  .question-tag { color: #91c9ff; font-size: 0.82rem; letter-spacing: 0.16em; text-transform: uppercase; text-align: center; margin-bottom: 16px; }
+  .question-text { font-family: 'Playfair Display', serif; font-size: clamp(1.2rem, 3vw, 1.6rem); line-height: 1.7; text-align: center; color: var(--muted-strong); margin-bottom: 26px; }
+
+  .options-grid { display: grid; gap: 14px; width: 100%; }
+  .option-btn { display: flex; align-items: center; gap: 16px; width: 100%; padding: 18px 22px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.04); color: var(--cream); text-align: left; cursor: pointer; transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease; position: relative; overflow: hidden; }
+  .option-btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(110,168,255,0.14), transparent); opacity: 0; transition: opacity 0.25s ease; }
+  .option-btn:hover:not(:disabled) { transform: translateX(3px); border-color: rgba(110,168,255,0.35); box-shadow: 0 0 18px rgba(110,168,255,0.12); }
+  .option-btn:hover:not(:disabled)::before { opacity: 1; }
+  .option-letter { width: 34px; height: 34px; min-width: 34px; border-radius: 50%; background: rgba(110,168,255,0.16); border: 1px solid rgba(110,168,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700; color: #91c9ff; transition: background 0.25s ease, color 0.25s ease; }
+
+  .option-btn.correct { background: rgba(56,189,248,0.14); border-color: rgba(56,189,248,0.5); }
+  .option-btn.correct .option-letter { background: rgba(56,189,248,0.3); color: #38bdf8; border-color: #38bdf8; }
+  .option-btn.wrong { background: rgba(248,113,113,0.14); border-color: rgba(248,113,113,0.5); }
+  .option-btn.wrong .option-letter { background: rgba(248,113,113,0.22); color: #f87171; border-color: #f87171; }
+  .option-btn:disabled { cursor: not-allowed; opacity: 0.9; }
+
+  .vote-reveal { display: none; margin-top: 24px; padding: 22px; border-radius: 22px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); gap: 16px; }
+  .vote-title { font-size: 1rem; font-weight: 700; color: var(--gold); text-align: center; }
+  .vote-row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; margin-bottom: 12px; }
+  .vote-row:last-child { margin-bottom: 0; }
+  .vote-row.highlight .vote-fill { box-shadow: 0 0 18px rgba(212,175,55,0.28); }
+  .vote-label { color: var(--muted-strong); font-size: 0.95rem; }
+  .vote-percentage { color: var(--muted); font-size: 0.95rem; white-space: nowrap; }
+  .vote-meter { position: relative; width: 100%; height: 12px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; }
+  .vote-fill { width: 0; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--blue), var(--gold)); transition: width 1s ease; }
+
+  .live-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+  .live-score { padding: 10px 18px; border-radius: 999px; border: 1px solid rgba(212,175,55,0.18); color: var(--gold); letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.82rem; }
+  .hint-text { color: var(--muted); font-size: 0.92rem; text-align: right; flex: 1; }
+
+  .score-ring {
+    width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(var(--gold) var(--pct, 0%), rgba(255,255,255,0.05) 0%); display: flex; align-items: center; justify-content: center; margin: 24px auto 12px; box-shadow: 0 0 42px rgba(212,175,55,0.18); position: relative;
+  }
+  .score-ring::before { content: ''; position: absolute; inset: 10px; border-radius: 50%; background: rgba(12,16,35,0.98); }
+  .score-inner { position: relative; z-index: 1; text-align: center; }
+  .score-number { font-family: 'Playfair Display', serif; font-size: 2.4rem; font-weight: 800; color: var(--gold-light); }
+  .score-label { font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+  .result-msg { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.18rem; color: #91c9ff; text-align: center; margin: 8px 0 20px; }
+
+  .lb-header,
+  .lb-row { display: grid; grid-template-columns: 48px 1fr 80px; gap: 14px; align-items: center; }
+  .lb-header { padding: 12px 0 12px 0; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 10px; }
+  .lb-row { padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .lb-row.top-1 { background: rgba(212,175,55,0.12); }
+  .lb-row.top-2 { background: rgba(170,170,170,0.1); }
+  .lb-row.top-3 { background: rgba(205,127,50,0.1); }
+  .lb-rank { font-family: 'Playfair Display', serif; font-size: 1.1rem; }
+  .lb-name { font-size: 0.96rem; color: var(--muted-strong); font-weight: 600; }
+  .lb-score-val { text-align: right; font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--gold-light); }
+  .lb-score-pts { display: block; font-size: 0.62rem; color: var(--muted); letter-spacing: 0.12em; }
+  .empty-board { padding: 36px 0; text-align: center; color: var(--muted); font-style: italic; }
+
+  #toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(80px); background: rgba(12,16,35,0.96); color: var(--cream); border-radius: 999px; padding: 14px 26px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 18px 40px rgba(0,0,0,0.35); opacity: 0; transition: opacity 0.35s ease, transform 0.35s ease; z-index: 100; pointer-events: none; }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .brand { margin-top: 28px; color: rgba(255,255,255,0.22); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; text-align: center; }
+
+  @media (max-width: 620px) {
+    .card { padding: 28px 20px; }
+    .question-text { font-size: 1.25rem; }
+    .live-row { flex-direction: column; align-items: stretch; text-align: center; }
+    .hint-text { text-align: center; }
+    .lb-header, .lb-row { grid-template-columns: 40px 1fr 60px; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="sparkle-canvas"></canvas>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+<div id="confetti-layer"></div>
+
+<div id="app">
+  <div class="screen active" id="screen-intro">
+    <div class="card" style="text-align:center;padding-top:56px;padding-bottom:56px;">
+      <div style="font-size:3.4rem;margin-bottom:14px;">🎓</div>
+      <h1 class="display-title">Class of 2026</h1>
+      <div class="subtitle">A graduation quiz that blends memory, emotion, and class consensus.</div>
+      <div class="ornament">✦</div>
+      <p style="color: rgba(255,255,255,0.76); font-size: 1rem; line-height: 1.8; margin-bottom: 30px;">
+        Step into the moment: answer objective memories, discover class opinions, and celebrate the journey together.
+      </p>
+      <button class="btn-primary" onclick="showScreen('screen-name')">Start the Quiz</button>
+    </div>
+    <div class="brand">An immersive graduation experience in a single page.</div>
+  </div>
+
+  <div class="screen" id="screen-name">
+    <div class="card">
+      <div style="font-size:2rem;text-align:center;margin-bottom:16px;">✨</div>
+      <h2 class="section-title">Your name?</h2>
+      <div class="subtitle">We’ll save your score to the class leaderboard.</div>
+      <div class="ornament"></div>
+      <div class="input-group">
+        <label class="input-label" for="player-name">Player name</label>
+        <input id="player-name" class="input-field" type="text" placeholder="e.g. Maya Carter" maxlength="32" autocomplete="off" />
+      </div>
+      <button class="btn-primary" onclick="startQuiz()" style="width:100%;">Begin</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-quiz">
+    <div class="card">
+      <div class="progress-wrap"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="question-counter" id="q-counter">Question 1 of 13</div>
+      <div class="question-tag" id="q-tag">Objective Question</div>
+      <p class="question-text" id="q-text"></p>
+      <div class="options-grid" id="options-grid"></div>
+      <div class="vote-reveal" id="vote-reveal">
+        <div class="vote-title" id="vote-title">The class voted...</div>
+        <div id="vote-bars"></div>
+        <p class="hint-text" id="vote-hint">Majority votes earn the class consensus point.</p>
+      </div>
+      <div class="live-row">
+        <span class="live-score" id="live-score">Score: 0</span>
+        <span class="hint-text" id="q-hint">Choose your answer, then watch the reveal.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-result">
+    <div class="card" style="text-align:center;">
+      <div style="font-size:2.7rem;margin-bottom:12px;">🎉</div>
+      <h2 class="section-title">Quiz Complete</h2>
+      <div class="ornament"></div>
+      <div class="score-ring" id="score-ring">
+        <div class="score-inner">
+          <div class="score-number" id="result-num">0</div>
+          <div class="score-label">Points</div>
+        </div>
+      </div>
+      <p class="result-msg" id="result-msg">You honored the memories and matched the class spirit.</p>
+      <p id="result-name" style="font-size:0.95rem;color:var(--muted);margin-bottom:26px;"></p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+        <button class="btn-primary" onclick="showLeaderboard()">View Leaderboard</button>
+        <button class="btn-secondary btn-primary" onclick="restartQuiz()" style="background:transparent;color:var(--gold);">Play Again</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-lb">
+    <div class="card">
+      <div style="font-size:2rem;text-align:center;margin-bottom:10px;">🏆</div>
+      <h2 class="section-title">Class Leaderboard</h2>
+      <div class="subtitle">See how your score compares with other graduates.</div>
+      <div class="ornament"></div>
+      <div class="lb-header">
+        <span>#</span>
+        <span>Player</span>
+        <span style="text-align:right;">Score</span>
+      </div>
+      <div id="lb-list"></div>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;justify-content:center;">
+      <button class="btn-primary" onclick="showScreen('screen-intro')">Home</button>
+      <button class="btn-secondary btn-primary" onclick="restartQuiz()" style="background:transparent;color:var(--gold);">Play Again</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const QUESTIONS = [
+  { q: 'Who was the Class of 2026\'s homeroom teacher in freshman year?', type: 'objective', options: ['Ms. Rivera', 'Mr. Chen', 'Mrs. Patel', 'Dr. Thompson'], answer: 1 },
+  { q: 'Who did the class vote as the most likely to become a famous actor?', type: 'subjective', options: ['Alex', 'Jordan', 'Taylor', 'Riley'], votes: [25, 35, 20, 20] },
+  { q: 'Which teacher was known for their epic science experiments?', type: 'objective', options: ['Mr. Garcia', 'Ms. Lee', 'Mr. Johnson', 'Mrs. Kim'], answer: 0 },
+  { q: 'Which student was voted the best dancer at prom?', type: 'subjective', options: ['Casey', 'Morgan', 'Jamie', 'Avery'], votes: [15, 40, 25, 20] },
+  { q: 'What was the nickname of the math teacher who always wore bow ties?', type: 'objective', options: ['Bow Tie Bob', 'Tie Guy Tim', 'Knot Master Ken', 'Ribbon Ron'], answer: 0 },
+  { q: 'Who did the class agree was the most likely to invent something cool?', type: 'subjective', options: ['Sam', 'Dev', 'Luna', 'Kai'], votes: [30, 20, 35, 15] },
+  { q: 'Which student organized the most class fundraisers?', type: 'objective', options: ['Emma', 'Liam', 'Sophia', 'Noah'], answer: 2 },
+  { q: 'Which teacher\'s class had the best field trips?', type: 'subjective', options: ['History with Mr. Blake', 'Art with Ms. Torres', 'PE with Coach Reed', 'Music with Mrs. Singh'], votes: [28, 22, 30, 20] },
+  { q: 'Who was the student council president for two years?', type: 'objective', options: ['Zara', 'Ethan', 'Mia', 'Lucas'], answer: 3 },
+  { q: 'Who did the class vote as the funniest person in the class?', type: 'subjective', options: ['Charlie', 'Harper', 'Drew', 'Skyler'], votes: [18, 42, 22, 18] },
+  { q: 'Which teacher inspired the most students to pursue STEM?', type: 'objective', options: ['Ms. Alvarez', 'Mr. Wong', 'Mrs. Foster', 'Dr. Hayes'], answer: 1 },
+  { q: 'Which student was known for their amazing baking at bake sales?', type: 'subjective', options: ['Bella', 'Finn', 'Grace', 'Hunter'], votes: [35, 15, 30, 20] },
+  { q: 'Who was the class valedictorian?', type: 'objective', options: ['Olivia', 'Mason', 'Isabella', 'Jackson'], answer: 0 }
+];
+
+let currentQ = 0;
+let score = 0;
+let playerName = '';
+let answered = false;
+let leaderboard = JSON.parse(localStorage.getItem('gradQuizLeaderboard') || '[]');
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(screen => {
+    screen.classList.remove('active');
+    screen.style.display = 'none';
+  });
+  const target = document.getElementById(id);
+  target.style.display = 'flex';
+  void target.offsetWidth;
+  target.classList.add('active');
+}
+
+function startQuiz() {
+  const input = document.getElementById('player-name');
+  playerName = input.value.trim();
+  if (!playerName) {
+    showToast('Please enter your name before we begin.');
+    return;
+  }
+  currentQ = 0;
+  score = 0;
+  answered = false;
+  renderQuestion();
+  showScreen('screen-quiz');
+}
+
+function restartQuiz() {
+  document.getElementById('player-name').value = '';
+  showScreen('screen-name');
+}
+
+function renderQuestion() {
+  const question = QUESTIONS[currentQ];
+  const total = QUESTIONS.length;
+  document.getElementById('progress-fill').style.width = `${Math.round((currentQ / total) * 100)}%`;
+  document.getElementById('q-counter').textContent = `Question ${currentQ + 1} of ${total}`;
+  document.getElementById('q-tag').textContent = question.type === 'objective' ? 'Objective Question' : 'Class Vote Question';
+  document.getElementById('q-text').textContent = question.q;
+  document.getElementById('live-score').textContent = `Score: ${score}`;
+  document.getElementById('q-hint').textContent = question.type === 'subjective' ? 'Pick the option you think the class chose.' : 'Choose the answer that remembers the moment.';
+
+  const grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+
+  question.options.forEach((option, idx) => {
+    const button = document.createElement('button');
+    button.className = 'option-btn';
+    button.innerHTML = `
+      <span class="option-letter">${letters[idx]}</span>
+      <span>${option}</span>
+    `;
+    button.addEventListener('click', () => selectAnswer(idx, button));
+    button.style.animation = 'fadeUp 0.45s cubic-bezier(0.22,1,0.36,1) both';
+    button.style.animationDelay = `${idx * 0.07}s`;
+    grid.appendChild(button);
+  });
+
+  const voteReveal = document.getElementById('vote-reveal');
+  voteReveal.style.display = 'none';
+  document.getElementById('vote-bars').innerHTML = '';
+  answered = false;
+}
+
+function selectAnswer(index, button) {
+  if (answered) return;
+  answered = true;
+  const question = QUESTIONS[currentQ];
+  const buttons = Array.from(document.querySelectorAll('.option-btn'));
+  buttons.forEach(btn => btn.disabled = true);
+
+  if (question.type === 'objective') {
+    const correctIndex = question.answer;
+    if (index === correctIndex) {
+      button.classList.add('correct');
+      score += 1;
+      showToast('✅ Correct — you remembered it!');
+    } else {
+      button.classList.add('wrong');
+      buttons[correctIndex].classList.add('correct');
+      showToast('❌ Not quite — try the next one.');
+    }
+    document.getElementById('live-score').textContent = `Score: ${score}`;
+    setTimeout(nextQuestion, 1500);
+    return;
+  }
+
+  revealVoteResults(question, index);
+}
+
+function revealVoteResults(question, selectedIndex) {
+  const voteReveal = document.getElementById('vote-reveal');
+  const bars = document.getElementById('vote-bars');
+  const total = question.votes.reduce((sum, value) => sum + value, 0);
+  const highest = Math.max(...question.votes);
+  const majority = question.votes.indexOf(highest);
+
+  bars.innerHTML = question.options.map((option, idx) => {
+    const percent = Math.round((question.votes[idx] / total) * 100);
+    const highlight = idx === majority ? 'highlight' : '';
+    return `
+      <div class="vote-row ${highlight}">
+        <span class="vote-label">${option}</span>
+        <span class="vote-percentage">${percent}%</span>
+        <div class="vote-meter"><div class="vote-fill" style="width: 0;" data-width="${percent}%"></div></div>
+      </div>
+    `;
+  }).join('');
+
+  voteReveal.style.display = 'grid';
+  document.getElementById('vote-title').textContent = 'The class voted...';
+  document.getElementById('vote-hint').textContent = 'Majority pick earns a consensus point.';
+
+  if (selectedIndex === majority) {
+    score += 1;
+    showToast('✨ Nice! You matched the class consensus.');
+  } else {
+    showToast('👀 The class had a different favorite.');
+  }
+  document.getElementById('live-score').textContent = `Score: ${score}`;
+
+  setTimeout(() => {
+    document.querySelectorAll('.vote-fill').forEach(fill => {
+      fill.style.width = fill.dataset.width;
+    });
+  }, 80);
+
+  setTimeout(nextQuestion, 2400);
+}
+
+function nextQuestion() {
+  currentQ += 1;
+  if (currentQ < QUESTIONS.length) {
+    renderQuestion();
+  } else {
+    finishQuiz();
+  }
+}
+
+function finishQuiz() {
+  const maxScore = QUESTIONS.length;
+  leaderboard.push({ name: playerName, score, created: Date.now() });
+  leaderboard.sort((a, b) => b.score - a.score || a.created - b.created);
+  localStorage.setItem('gradQuizLeaderboard', JSON.stringify(leaderboard.slice(0, 20)));
+
+  const ring = document.getElementById('score-ring');
+  ring.style.setProperty('--pct', `${Math.round((score / maxScore) * 360)}deg`);
+  document.getElementById('result-num').textContent = score;
+  document.getElementById('result-name').textContent = `Well done, ${playerName}!`;
+
+  let message = 'A meaningful finish to a memorable class journey.';
+  if (score === maxScore) message = 'Perfect score! You are the class memory champion.';
+  else if (score >= maxScore * 0.85) message = 'Amazing — you truly captured the class spirit.';
+  else if (score >= maxScore * 0.65) message = 'Great job! You know the stories well.';
+  else if (score >= maxScore * 0.45) message = 'Solid effort — the journey is still fresh in heart.';
+  else message = 'Fun run! Share the quiz and compare with friends.';
+
+  document.getElementById('result-msg').textContent = message;
+  launchConfetti();
+  showScreen('screen-result');
+}
+
+function showLeaderboard() {
+  const list = document.getElementById('lb-list');
+  list.innerHTML = '';
+  if (!leaderboard.length) {
+    list.innerHTML = '<div class="empty-board">No scores yet — be the first to set the record.</div>';
+    showScreen('screen-lb');
+    return;
+  }
+
+  leaderboard.slice(0, 12).forEach((entry, idx) => {
+    const row = document.createElement('div');
+    const rankClass = idx === 0 ? 'top-1' : idx === 1 ? 'top-2' : idx === 2 ? 'top-3' : '';
+    const label = idx === 0 ? '👑' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `<span>${idx + 1}</span>`;
+    row.className = `lb-row ${rankClass}`;
+    row.innerHTML = `
+      <span class="lb-rank">${label}</span>
+      <span class="lb-name">${escapeHtml(entry.name)}</span>
+      <span class="lb-score-val">${entry.score}<span class="lb-score-pts">pts</span></span>
+    `;
+    list.appendChild(row);
+  });
+  showScreen('screen-lb');
+}
+
+function escapeHtml(text) {
+  return text.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
+}
+
+let toastTimeout;
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => toast.classList.remove('show'), 2400);
+}
+
+function launchConfetti() {
+  const layer = document.getElementById('confetti-layer');
+  const colors = ['#d4af37', '#7dc1ff', '#ffffff', '#93c0ff', '#f5e07a'];
+  for (let i = 0; i < 70; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    const size = Math.random() * 6 + 4;
+    piece.style.left = `${Math.random() * 100}%`;
+    piece.style.width = `${size}px`;
+    piece.style.height = `${size}px`;
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDuration = `${Math.random() * 1.8 + 1.8}s`;
+    piece.style.animationDelay = `${Math.random() * 0.6}s`;
+    piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+    layer.appendChild(piece);
+    piece.addEventListener('animationend', () => piece.remove());
+  }
+}
+
+(function createSparkles() {
+  const canvas = document.getElementById('sparkle-canvas');
+  const ctx = canvas.getContext('2d');
+  let width = window.innerWidth;
+  let height = window.innerHeight;
+  const sparks = [];
+
+  function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
+  window.addEventListener('resize', resize);
+  resize();
+
+  class Spark {
+    constructor() { this.reset(); }
+    reset() {
+      this.x = Math.random() * width;
+      this.y = Math.random() * height;
+      this.radius = Math.random() * 1.4 + 0.6;
+      this.vx = (Math.random() - 0.5) * 0.3;
+      this.vy = (Math.random() - 0.5) * 0.3;
+      this.alpha = Math.random() * 0.5 + 0.1;
+      this.life = 0;
+      this.maxLife = Math.random() * 240 + 120;
+    }
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.life += 1;
+      if (this.x < -20 || this.x > width + 20 || this.y < -20 || this.y > height + 20 || this.life > this.maxLife) this.reset();
+    }
+    draw() {
+      const progress = this.life < 40 ? this.life / 40 : this.life > this.maxLife - 40 ? (this.maxLife - this.life) / 40 : 1;
+      ctx.globalAlpha = this.alpha * progress;
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  for (let i = 0; i < 100; i++) sparks.push(new Spark());
+  function animate() { ctx.clearRect(0, 0, width, height); sparks.forEach(s => { s.update(); s.draw(); }); requestAnimationFrame(animate); }
+  animate();
+})();
+</script>
+</body>
+</html>
