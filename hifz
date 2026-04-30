@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Qur'an Hifz Challenge Quiz</title>
+  <style>
+    :root {
+      --bg: #f7fbf8;
+      --panel: rgba(255, 255, 255, 0.82);
+      --emerald: #0f7a5a;
+      --emerald-soft: #2ea07d;
+      --gold: #c9a75f;
+      --text: #1e2a23;
+      --muted: #5f7369;
+      --line: #d8e7df;
+      --ok: #d8f3e3;
+      --bad: #fde2e2;
+      --shadow: 0 24px 55px rgba(20, 68, 52, 0.14);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Inter", "Segoe UI", Tahoma, sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(15, 122, 90, 0.09), transparent 36%),
+        radial-gradient(circle at 90% 8%, rgba(201, 167, 95, 0.12), transparent 28%),
+        linear-gradient(180deg, #ffffff, var(--bg));
+      overflow-x: hidden;
+    }
+
+    #particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.09;
+      background-image: radial-gradient(circle, #0f7a5a 0.6px, transparent 0.6px);
+      background-size: 18px 18px;
+    }
+
+    .float-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(38px);
+      pointer-events: none;
+      z-index: 0;
+      animation: drift 16s ease-in-out infinite;
+    }
+    .orb-1 { width: 220px; height: 220px; top: 4%; left: -70px; background: rgba(15, 122, 90, 0.22); }
+    .orb-2 { width: 260px; height: 260px; right: -90px; top: 35%; background: rgba(201, 167, 95, 0.2); animation-duration: 19s; }
+
+    .page {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px 14px;
+    }
+
+    .card {
+      width: min(980px, 96vw);
+      border: 1px solid rgba(216, 231, 223, 0.9);
+      border-radius: 24px;
+      background: var(--panel);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+      isolation: isolate;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: 24px;
+      pointer-events: none;
+      background: linear-gradient(125deg, rgba(15, 122, 90, 0.17), transparent 44%, rgba(201, 167, 95, 0.16));
+      z-index: -1;
+    }
+
+    .screen {
+      display: none;
+      padding: clamp(20px, 4.2vw, 38px);
+      animation: reveal 420ms ease both;
+    }
+    .screen.active { display: block; }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--emerald);
+      border: 1px solid #b7dccc;
+      background: #eff8f4;
+      border-radius: 999px;
+      padding: 6px 12px;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .title {
+      margin: 0 0 10px;
+      font-size: clamp(1.6rem, 5vw, 2.9rem);
+      line-height: 1.14;
+      font-weight: 800;
+      font-family: Georgia, "Times New Roman", serif;
+      color: #174634;
+      text-wrap: balance;
+    }
+
+    .subtitle {
+      margin: 0 0 20px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 65ch;
+    }
+
+    .row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .input {
+      flex: 1 1 260px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 13px;
+      font-size: 0.98rem;
+      color: var(--text);
+      background: #fff;
+      transition: border-color 180ms ease, box-shadow 180ms ease;
+    }
+    .input:focus {
+      outline: none;
+      border-color: #8dcab4;
+      box-shadow: 0 0 0 3px rgba(46, 160, 125, 0.2);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      cursor: pointer;
+      background: linear-gradient(180deg, var(--emerald-soft), var(--emerald));
+      color: #fff;
+      font-weight: 700;
+      transition: transform 140ms ease, box-shadow 200ms ease, filter 160ms ease;
+      box-shadow: 0 8px 18px rgba(15, 122, 90, 0.24);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn:hover, .btn:focus-visible {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+      outline: none;
+    }
+    .btn.alt {
+      background: #fff;
+      color: var(--emerald);
+      border: 1px solid #b7dccc;
+      box-shadow: none;
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .progress-wrap {
+      height: 8px;
+      background: #e8f1ec;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 12px 0 16px;
+    }
+    .progress {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--emerald), var(--gold));
+      transition: width 280ms ease;
+      position: relative;
+    }
+    .progress::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 24px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55));
+    }
+
+    .topic {
+      display: inline-block;
+      margin-bottom: 10px;
+      font-size: 0.8rem;
+      color: var(--emerald);
+      border: 1px solid #cfe6dc;
+      border-radius: 999px;
+      padding: 5px 11px;
+      background: #f2faf6;
+    }
+    .question {
+      margin: 0 0 14px;
+      font-size: clamp(1.07rem, 2.8vw, 1.34rem);
+      line-height: 1.56;
+      font-weight: 700;
+      animation: fadeSlide 260ms ease both;
+    }
+    .options { display: grid; gap: 11px; }
+    .option {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--text);
+      padding: 12px 13px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: border-color .15s ease, transform .14s ease, box-shadow .15s ease;
+      animation: fadeSlide 320ms ease both;
+    }
+    .option:hover:not(:disabled), .option:focus-visible:not(:disabled) {
+      border-color: #90cab4;
+      transform: translateX(2px);
+      box-shadow: 0 8px 16px rgba(15, 122, 90, 0.08);
+      outline: none;
+    }
+    .option.correct { background: var(--ok); border-color: #96d3b3; }
+    .option.wrong { background: var(--bad); border-color: #e9a8a8; }
+    .option.correct { animation: pop 320ms ease; }
+    .option.wrong { animation: shake 320ms ease; }
+    .feedback {
+      min-height: 24px;
+      margin-top: 12px;
+      color: #2f6852;
+      font-size: 0.92rem;
+      opacity: 0;
+      transform: translateY(3px);
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .feedback.show { opacity: 1; transform: translateY(0); }
+
+    .score {
+      font-size: clamp(1.9rem, 5vw, 2.6rem);
+      color: #1b5c44;
+      font-weight: 800;
+      margin: 6px 0 10px;
+      animation: pulse 1.2s ease infinite;
+    }
+
+    .leaderboard {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .lb-head {
+      display: flex;
+      justify-content: space-between;
+      padding: 11px 13px;
+      border-bottom: 1px solid #edf4f0;
+      color: var(--emerald);
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+    .lb-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      max-height: 260px;
+      overflow: auto;
+    }
+    .lb-row {
+      display: grid;
+      grid-template-columns: 38px 1fr auto;
+      gap: 10px;
+      padding: 10px 13px;
+      border-bottom: 1px solid #f1f5f3;
+      font-size: 0.92rem;
+      animation: fadeSlide 300ms ease both;
+    }
+    .lb-row:last-child { border-bottom: none; }
+    .empty { padding: 13px; color: var(--muted); font-size: 0.9rem; }
+
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      transform: scale(0);
+      animation: ripple 520ms linear;
+      background: rgba(255, 255, 255, 0.62);
+      pointer-events: none;
+    }
+
+    .burst {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(201, 167, 95, 0.75);
+      box-shadow: 0 0 14px rgba(15, 122, 90, 0.35);
+      animation: burst 780ms ease-out forwards;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    @keyframes reveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeSlide { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes drift { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-18px); } }
+    @keyframes ripple { to { transform: scale(4); opacity: 0; } }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+    @keyframes pop { 0% { transform: scale(0.98); } 55% { transform: scale(1.03); } 100% { transform: scale(1); } }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+    @keyframes burst { from { transform: translate(0, 0) scale(1); opacity: 1; } to { transform: translate(var(--x), var(--y)) scale(0.1); opacity: 0; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 1ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <canvas id="particles" aria-hidden="true"></canvas>
+  <div class="float-orb orb-1" aria-hidden="true"></div>
+  <div class="float-orb orb-2" aria-hidden="true"></div>
+  <main class="page">
+    <section class="card" aria-live="polite">
+      <div id="introScreen" class="screen active">
+        <span class="badge">Islamic Memorization Quiz</span>
+        <h1 class="title">Qur'an Hifz Challenge</h1>
+        <p class="subtitle">15 advanced questions designed for those who have memorized the Qur'an. Test your precision and rank on the leaderboard.</p>
+        <div class="row">
+          <input id="playerName" class="input" type="text" maxlength="28" placeholder="Enter your name">
+          <button id="startBtn" class="btn" type="button">Start Quiz</button>
+        </div>
+      </div>
+      <div id="quizScreen" class="screen">
+        <div class="top"><span id="progressText">Question 1 / 15</span><span id="scoreText">Score: 0</span></div>
+        <div class="progress-wrap"><div id="progressBar" class="progress"></div></div>
+        <span id="topicTag" class="topic">Hifz Detail</span>
+        <h2 id="questionText" class="question"></h2>
+        <div id="options" class="options"></div>
+        <div id="feedback" class="feedback"></div>
+      </div>
+      <div id="resultScreen" class="screen">
+        <span class="badge">Result</span>
+        <h2 class="title">Quiz Complete</h2>
+        <div id="scoreValue" class="score">0 / 15</div>
+        <p id="resultMessage" class="subtitle"></p>
+        <div class="leaderboard">
+          <div class="lb-head"><span>Leaderboard</span><span>Highest Score First</span></div>
+          <ul id="leaderboardList" class="lb-list"></ul>
+          <div id="leaderboardEmpty" class="empty">No scores yet.</div>
+        </div>
+        <div class="row" style="margin-top:14px;">
+          <button id="downloadBtn" class="btn alt" type="button">Download Leaderboard</button>
+          <button id="againBtn" class="btn" type="button">Play Again</button>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script>
+    const STORAGE_KEY = "quran_hifz_leaderboard_v1";
+    const QUESTIONS = [
+      { topic: "Juz Order", question: "In which juz does Surah Al-Mujadilah begin?", options: ["Juz 26", "Juz 27", "Juz 28", "Juz 29"], correctIndex: 2 },
+      { topic: "Ayah Number", question: "Which surah contains exactly 11 ayat?", options: ["Al-Asr", "Al-Jumu'ah", "Al-Munafiqun", "At-Taghabun"], correctIndex: 2 },
+      { topic: "Mutashabihat", question: "Which pair of surahs both open with \"Alif Lam Mim\"?", options: ["Yunus & Hud", "Al-Baqarah & Aal Imran", "Ar-Ra'd & Ibrahim", "Maryam & Taha"], correctIndex: 1 },
+      { topic: "Makki/Madani", question: "Which surah is Madani among these?", options: ["Al-Ankabut", "Yusuf", "Ar-Rahman", "Al-Bayyinah"], correctIndex: 3 },
+      { topic: "Sequence", question: "Which surah comes immediately after Surah Al-Qiyamah?", options: ["Al-Insan", "Al-Mursalat", "An-Naba", "Al-Muddaththir"], correctIndex: 0 },
+      { topic: "Name Mention", question: "How many times is the name 'Maryam' mentioned in Surah Maryam?", options: ["25", "31", "34", "37"], correctIndex: 2 },
+      { topic: "Unique Phrase", question: "In which surah does \"فَبِأَيِّ آلَاءِ رَبِّكُمَا تُكَذِّبَانِ\" repeat?", options: ["Ar-Rahman", "Al-Waqi'ah", "Al-Hadid", "Al-Hashr"], correctIndex: 0 },
+      { topic: "Juz Boundary", question: "Juz 30 begins in which surah?", options: ["An-Naba", "Al-Mursalat", "An-Nazi'at", "Abasa"], correctIndex: 1 },
+      { topic: "Ruku Detail", question: "Which surah has no letter 'meem' in its name?", options: ["Hud", "Qaf", "Nuh", "Yasin"], correctIndex: 0 },
+      { topic: "Ayat Count", question: "How many ayat are in Surah Al-Mulk?", options: ["28", "29", "30", "31"], correctIndex: 2 },
+      { topic: "Order", question: "Which surah directly precedes Surah Al-Kahf in the mushaf?", options: ["Al-Isra", "Maryam", "Taha", "Yusuf"], correctIndex: 0 },
+      { topic: "Wording", question: "Which surah starts with \"تَبَارَكَ\"?", options: ["Al-Mulk", "Al-Furqan", "Both A and B", "Neither"], correctIndex: 2 },
+      { topic: "Endings", question: "Which surah ends with \"مِنَ الْجِنَّةِ وَالنَّاسِ\"?", options: ["Al-Ikhlas", "Al-Falaq", "An-Nas", "Al-Baqarah"], correctIndex: 2 },
+      { topic: "Placement", question: "Surah Al-Hadid is located in which juz?", options: ["Juz 26", "Juz 27", "Juz 28", "Juz 29"], correctIndex: 1 },
+      { topic: "Memorization", question: "Which surah is known as the 'heart of the Qur'an' in common narration usage?", options: ["Yasin", "Ar-Rahman", "Al-Waqi'ah", "Al-Mulk"], correctIndex: 0 }
+    ];
+
+    const state = { index: 0, score: 0, locked: false, player: "", questions: [], leaderboard: [] };
+    const ui = {
+      intro: document.getElementById("introScreen"), quiz: document.getElementById("quizScreen"), result: document.getElementById("resultScreen"),
+      playerName: document.getElementById("playerName"), startBtn: document.getElementById("startBtn"),
+      progressText: document.getElementById("progressText"), scoreText: document.getElementById("scoreText"), progressBar: document.getElementById("progressBar"),
+      topicTag: document.getElementById("topicTag"), questionText: document.getElementById("questionText"), options: document.getElementById("options"), feedback: document.getElementById("feedback"),
+      scoreValue: document.getElementById("scoreValue"), resultMessage: document.getElementById("resultMessage"),
+      leaderboardList: document.getElementById("leaderboardList"), leaderboardEmpty: document.getElementById("leaderboardEmpty"),
+      downloadBtn: document.getElementById("downloadBtn"), againBtn: document.getElementById("againBtn"),
+      card: document.querySelector(".card"), particles: document.getElementById("particles")
+    };
+
+    function setScreen(screen) {
+      [ui.intro, ui.quiz, ui.result].forEach((el) => el.classList.remove("active"));
+      screen.classList.add("active");
+    }
+
+    function shuffle(a) {
+      const x = [...a];
+      for (let i = x.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [x[i], x[j]] = [x[j], x[i]];
+      }
+      return x;
+    }
+
+    function prepareQuestion(q) {
+      const idx = q.options.map((t, i) => ({ t, i }));
+      const mixed = shuffle(idx);
+      return { ...q, options: mixed.map((m) => m.t), correctIndex: mixed.findIndex((m) => m.i === q.correctIndex) };
+    }
+
+    function ripple(event) {
+      const button = event.currentTarget;
+      const rect = button.getBoundingClientRect();
+      const dot = document.createElement("span");
+      const size = Math.max(rect.width, rect.height);
+      dot.className = "ripple";
+      dot.style.width = `${size}px`;
+      dot.style.height = `${size}px`;
+      dot.style.left = `${event.clientX - rect.left - size / 2}px`;
+      dot.style.top = `${event.clientY - rect.top - size / 2}px`;
+      button.appendChild(dot);
+      setTimeout(() => dot.remove(), 520);
+    }
+
+    function burst(x, y, count = 12) {
+      for (let i = 0; i < count; i += 1) {
+        const el = document.createElement("span");
+        el.className = "burst";
+        const angle = (Math.PI * 2 * i) / count;
+        const dist = 34 + Math.random() * 34;
+        el.style.left = `${x}px`;
+        el.style.top = `${y}px`;
+        el.style.setProperty("--x", `${Math.cos(angle) * dist}px`);
+        el.style.setProperty("--y", `${Math.sin(angle) * dist}px`);
+        ui.card.appendChild(el);
+        setTimeout(() => el.remove(), 790);
+      }
+    }
+
+    function initParticles() {
+      const canvas = ui.particles;
+      const ctx = canvas.getContext("2d");
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let dots = [];
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const count = Math.min(90, Math.round((canvas.width * canvas.height) / 16000));
+        dots = Array.from({ length: count }, () => ({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: 0.6 + Math.random() * 1.5,
+          o: 0.2 + Math.random() * 0.35,
+          dx: (Math.random() - 0.5) * 0.16,
+          dy: (Math.random() - 0.5) * 0.16
+        }));
+      }
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        dots.forEach((d) => {
+          d.x += d.dx; d.y += d.dy;
+          if (d.x < 0) d.x = canvas.width;
+          if (d.x > canvas.width) d.x = 0;
+          if (d.y < 0) d.y = canvas.height;
+          if (d.y > canvas.height) d.y = 0;
+          ctx.fillStyle = `rgba(15,122,90,${d.o})`;
+          ctx.beginPath();
+          ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        if (!reduced) requestAnimationFrame(draw);
+      }
+      resize();
+      draw();
+      window.addEventListener("resize", resize);
+    }
+
+    function loadLeaderboard() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        state.leaderboard = Array.isArray(parsed) ? parsed : [];
+      } catch { state.leaderboard = []; }
+    }
+
+    function saveLeaderboard() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.leaderboard));
+    }
+
+    function renderLeaderboard() {
+      ui.leaderboardList.innerHTML = "";
+      if (!state.leaderboard.length) {
+        ui.leaderboardEmpty.style.display = "block";
+        return;
+      }
+      ui.leaderboardEmpty.style.display = "none";
+      state.leaderboard.forEach((r, i) => {
+        const li = document.createElement("li");
+        li.className = "lb-row";
+        li.innerHTML = `<span>${i + 1}</span><span>${r.name}</span><strong>${r.score}/${r.total}</strong>`;
+        ui.leaderboardList.appendChild(li);
+      });
+    }
+
+    function updateLeaderboard(name, score, total) {
+      state.leaderboard.push({ name, score, total, time: new Date().toISOString() });
+      state.leaderboard.sort((a, b) => (b.score - a.score) || (new Date(b.time) - new Date(a.time)));
+      state.leaderboard = state.leaderboard.slice(0, 40);
+      saveLeaderboard();
+      renderLeaderboard();
+    }
+
+    function downloadLeaderboard() {
+      if (!state.leaderboard.length) return;
+      const lines = ["Rank,Name,Score,Total,Timestamp"];
+      state.leaderboard.forEach((r, i) => lines.push(`${i + 1},"${String(r.name).replaceAll("\"", "\"\"")}",${r.score},${r.total},${r.time}`));
+      const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "quran-hifz-leaderboard.csv";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function resetQuiz() {
+      state.index = 0;
+      state.score = 0;
+      state.locked = false;
+      state.questions = shuffle(QUESTIONS).map(prepareQuestion);
+      ui.feedback.textContent = "";
+      ui.feedback.classList.remove("show");
+    }
+
+    function startQuiz() {
+      state.player = ui.playerName.value.trim() || "Guest";
+      resetQuiz();
+      setScreen(ui.quiz);
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const q = state.questions[state.index];
+      const total = state.questions.length;
+      ui.progressText.textContent = `Question ${state.index + 1} / ${total}`;
+      ui.scoreText.textContent = `Score: ${state.score}`;
+      ui.progressBar.style.width = `${((state.index + 1) / total) * 100}%`;
+      ui.topicTag.textContent = q.topic;
+      ui.questionText.textContent = q.question;
+      ui.options.innerHTML = "";
+      ui.feedback.textContent = "";
+      ui.feedback.classList.remove("show");
+      state.locked = false;
+      q.options.forEach((text, i) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "option";
+        btn.textContent = text;
+        btn.style.animationDelay = `${i * 40}ms`;
+        btn.addEventListener("click", () => answer(i));
+        ui.options.appendChild(btn);
+      });
+    }
+
+    function answer(selected) {
+      if (state.locked) return;
+      state.locked = true;
+      const q = state.questions[state.index];
+      const correct = selected === q.correctIndex;
+      const buttons = ui.options.querySelectorAll(".option");
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (i === q.correctIndex) b.classList.add("correct");
+        else if (i === selected) b.classList.add("wrong");
+      });
+      if (correct) {
+        state.score += 1;
+        ui.feedback.textContent = "Correct.";
+        burst(130, 130, 10);
+      } else {
+        ui.feedback.textContent = "Not correct.";
+      }
+      ui.feedback.classList.add("show");
+      ui.scoreText.textContent = `Score: ${state.score}`;
+      setTimeout(() => {
+        state.index += 1;
+        if (state.index >= state.questions.length) showResult();
+        else renderQuestion();
+      }, 900);
+    }
+
+    function showResult() {
+      setScreen(ui.result);
+      const total = state.questions.length;
+      ui.scoreValue.textContent = `${state.score} / ${total}`;
+      const pct = Math.round((state.score / total) * 100);
+      ui.resultMessage.textContent =
+        pct >= 80 ? `${state.player}, excellent hifz precision.` :
+        pct >= 50 ? `${state.player}, strong memorization performance.` :
+        `${state.player}, keep revising and try again.`;
+      burst(170, 120, 18);
+      updateLeaderboard(state.player, state.score, total);
+    }
+
+    ui.startBtn.addEventListener("click", (e) => { ripple(e); startQuiz(); });
+    ui.againBtn.addEventListener("click", (e) => { ripple(e); setScreen(ui.intro); });
+    ui.downloadBtn.addEventListener("click", (e) => { ripple(e); downloadLeaderboard(); });
+    initParticles();
+    loadLeaderboard();
+    renderLeaderboard();
+  </script>
+</body>
+</html>
