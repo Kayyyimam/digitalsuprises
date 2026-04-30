@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How Well Do You Know the Bride?</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --gold: #d4af37;
+    --gold-light: #f5e07a;
+    --gold-dim: #a8892b;
+    --rose: #e8a0a0;
+    --rose-light: #f5c6c6;
+    --cream: #faf3e8;
+    --black: #080808;
+    --dark: #111111;
+    --card: #161616;
+    --border: rgba(212,175,55,0.25);
+    --text-muted: rgba(250,243,232,0.5);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--black);
+    color: var(--cream);
+    font-family: 'Montserrat', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* ── Particle / sparkle canvas ── */
+  #sparkle-canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Ambient glow blobs ── */
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.12;
+    pointer-events: none;
+    z-index: 0;
+    animation: blobDrift 18s ease-in-out infinite alternate;
+  }
+  .blob-1 { width: 500px; height: 500px; background: var(--gold); top: -150px; left: -150px; }
+  .blob-2 { width: 400px; height: 400px; background: var(--rose); bottom: -100px; right: -100px; animation-delay: -9s; }
+  .blob-3 { width: 300px; height: 300px; background: #c084fc; top: 40%; left: 50%; animation-delay: -4s; }
+  @keyframes blobDrift { from { transform: translate(0,0) scale(1); } to { transform: translate(40px, 40px) scale(1.1); } }
+
+  /* ── App wrapper ── */
+  #app {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  /* ── Screen base ── */
+  .screen {
+    display: none;
+    width: 100%;
+    max-width: 640px;
+    animation: fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) both;
+  }
+  .screen.active { display: flex; flex-direction: column; align-items: center; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Divider ornament ── */
+  .ornament {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--gold);
+    font-size: 1.1rem;
+    margin: 16px 0;
+    width: 100%;
+    justify-content: center;
+  }
+  .ornament::before, .ornament::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+    max-width: 120px;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px 36px;
+    width: 100%;
+    box-shadow: 0 0 60px rgba(212,175,55,0.07), 0 2px 30px rgba(0,0,0,0.6);
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(212,175,55,0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  /* ── Typography ── */
+  .display-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 7vw, 3.8rem);
+    font-weight: 700;
+    line-height: 1.1;
+    text-align: center;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--rose-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 20px rgba(212,175,55,0.4));
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1rem, 3.5vw, 1.3rem);
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    color: var(--gold-light);
+    text-align: center;
+    filter: drop-shadow(0 0 12px rgba(212,175,55,0.5));
+    margin-bottom: 4px;
+  }
+
+  /* ── Buttons ── */
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    color: var(--black);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 50px;
+    padding: 16px 48px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 20px rgba(212,175,55,0.3), 0 4px 20px rgba(0,0,0,0.4);
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 35px rgba(212,175,55,0.5), 0 8px 30px rgba(0,0,0,0.5); }
+  .btn-primary:hover::after { opacity: 1; }
+  .btn-primary:active { transform: translateY(0); }
+
+  /* ── Input ── */
+  .input-group { width: 100%; margin-bottom: 24px; }
+  .input-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+    display: block;
+  }
+  .input-field {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    color: var(--cream);
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .input-field:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 20px rgba(212,175,55,0.15);
+  }
+  .input-field::placeholder { color: rgba(250,243,232,0.25); }
+
+  /* ── Progress bar ── */
+  .progress-wrap {
+    width: 100%;
+    background: rgba(255,255,255,0.06);
+    border-radius: 50px;
+    height: 6px;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 50px;
+    background: linear-gradient(90deg, var(--gold-dim), var(--gold-light));
+    box-shadow: 0 0 8px rgba(212,175,55,0.5);
+    transition: width 0.6s cubic-bezier(0.22,1,0.36,1);
+  }
+
+  /* ── Question ── */
+  .question-counter {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  .question-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.15rem, 4.5vw, 1.45rem);
+    line-height: 1.55;
+    text-align: center;
+    color: var(--cream);
+    margin-bottom: 28px;
+  }
+
+  /* ── Options ── */
+  .options-grid { display: grid; gap: 12px; width: 100%; }
+  .option-btn {
+    width: 100%;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(212,175,55,0.18);
+    border-radius: 14px;
+    padding: 15px 22px;
+    text-align: left;
+    color: var(--cream);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.92rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .option-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(212,175,55,0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .option-letter {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    border-radius: 50%;
+    background: rgba(212,175,55,0.12);
+    border: 1px solid rgba(212,175,55,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--gold);
+    transition: all 0.25s;
+  }
+  .option-btn:hover:not(:disabled) {
+    border-color: rgba(212,175,55,0.5);
+    transform: translateX(4px);
+    box-shadow: -4px 0 20px rgba(212,175,55,0.08);
+  }
+  .option-btn:hover:not(:disabled)::before { opacity: 1; }
+  .option-btn:hover:not(:disabled) .option-letter { background: rgba(212,175,55,0.25); }
+
+  /* Correct / Wrong states */
+  .option-btn.correct {
+    background: rgba(34,197,94,0.12);
+    border-color: rgba(34,197,94,0.5);
+    box-shadow: 0 0 20px rgba(34,197,94,0.15);
+  }
+  .option-btn.correct .option-letter { background: rgba(34,197,94,0.3); border-color: #4ade80; color: #4ade80; }
+  .option-btn.wrong {
+    background: rgba(239,68,68,0.1);
+    border-color: rgba(239,68,68,0.4);
+  }
+  .option-btn.wrong .option-letter { background: rgba(239,68,68,0.2); border-color: #f87171; color: #f87171; }
+  .option-btn:disabled { cursor: not-allowed; }
+
+  /* ── Score display ── */
+  .score-ring {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: conic-gradient(var(--gold) var(--pct, 0%), rgba(255,255,255,0.06) 0%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px auto;
+    box-shadow: 0 0 40px rgba(212,175,55,0.25);
+    position: relative;
+  }
+  .score-ring::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border-radius: 50%;
+    background: var(--card);
+  }
+  .score-inner {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+  .score-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    filter: drop-shadow(0 0 8px rgba(212,175,55,0.6));
+    line-height: 1;
+  }
+  .score-label { font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); }
+  .result-msg {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.2rem;
+    color: var(--rose-light);
+    text-align: center;
+    margin: 8px 0 24px;
+  }
+
+  /* ── Leaderboard ── */
+  .lb-header {
+    display: grid;
+    grid-template-columns: 40px 1fr 60px;
+    gap: 12px;
+    padding: 8px 16px;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  .lb-row {
+    display: grid;
+    grid-template-columns: 40px 1fr 60px;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid transparent;
+    margin-bottom: 8px;
+    transition: all 0.3s;
+    animation: rowSlide 0.5s cubic-bezier(0.22,1,0.36,1) both;
+  }
+  .lb-row:nth-child(1) { animation-delay: 0.05s; }
+  .lb-row:nth-child(2) { animation-delay: 0.1s; }
+  .lb-row:nth-child(3) { animation-delay: 0.15s; }
+  .lb-row:nth-child(n+4) { animation-delay: 0.2s; }
+  @keyframes rowSlide { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+  .lb-row.top-1 {
+    background: linear-gradient(90deg, rgba(212,175,55,0.12), rgba(212,175,55,0.03));
+    border-color: rgba(212,175,55,0.3);
+    box-shadow: 0 0 20px rgba(212,175,55,0.08);
+  }
+  .lb-row.top-2 { background: linear-gradient(90deg, rgba(192,192,192,0.08), transparent); border-color: rgba(192,192,192,0.2); }
+  .lb-row.top-3 { background: linear-gradient(90deg, rgba(205,127,50,0.08), transparent); border-color: rgba(205,127,50,0.2); }
+  .lb-rank {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-align: center;
+  }
+  .lb-row.top-1 .lb-rank { color: var(--gold); filter: drop-shadow(0 0 6px rgba(212,175,55,0.7)); }
+  .lb-row.top-2 .lb-rank { color: #c0c0c0; }
+  .lb-row.top-3 .lb-rank { color: #cd7f32; }
+  .lb-rank-num { color: var(--text-muted); font-size: 0.85rem; }
+  .lb-name { font-size: 0.95rem; font-weight: 600; color: var(--cream); }
+  .lb-score-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    text-align: right;
+    color: var(--gold-light);
+  }
+  .lb-score-pts { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; display: block; text-align: right; }
+  .empty-board {
+    text-align: center;
+    color: var(--text-muted);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    padding: 32px 0;
+    font-size: 1.1rem;
+  }
+  .crown { font-size: 1.3rem; }
+
+  /* ── Feedback toast ── */
+  #toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 12px 28px;
+    font-size: 0.9rem;
+    color: var(--cream);
+    z-index: 100;
+    transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+    pointer-events: none;
+    white-space: nowrap;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── Brand watermark ── */
+  .brand {
+    text-align: center;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(212,175,55,0.35);
+    margin-top: 28px;
+  }
+
+  /* ── Confetti layer ── */
+  #confetti-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 50;
+    overflow: hidden;
+  }
+  .confetti-piece {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 1px;
+    top: -10px;
+    animation: confettiFall linear forwards;
+  }
+  @keyframes confettiFall {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* ── Responsive tweaks ── */
+  @media(max-width:480px) {
+    .card { padding: 28px 20px; }
+    .option-btn { padding: 13px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Background elements -->
+<canvas id="sparkle-canvas"></canvas>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+<div id="confetti-layer"></div>
+
+<div id="app">
+
+  <!-- ════════════════════ INTRO SCREEN ════════════════════ -->
+  <div class="screen active" id="screen-intro">
+    <div class="card" style="text-align:center; padding-top:52px; padding-bottom:52px;">
+      <div style="font-size:3rem; margin-bottom:16px; animation: pulse 2.5s ease-in-out infinite;">💍</div>
+      <h1 class="display-title">How Well Do<br>You Know<br>the Bride?</h1>
+      <div class="ornament">✦</div>
+      <p class="subtitle">A celebration quiz for her special day</p>
+      <p style="color:var(--text-muted);font-size:0.82rem;margin:20px 0 36px;line-height:1.7;">
+        Answer 10 questions about the bride-to-be.<br>
+        Compete with friends &amp; top the leaderboard!
+      </p>
+      <button class="btn-primary" onclick="showScreen('screen-name')">✨ Start Game</button>
+    </div>
+    <div class="brand">Powered by Waves Software Company</div>
+  </div>
+
+  <!-- ════════════════════ NAME INPUT ════════════════════ -->
+  <div class="screen" id="screen-name">
+    <div class="card">
+      <div style="font-size:2rem;text-align:center;margin-bottom:12px;">👰</div>
+      <h2 class="section-title">Enter Your Name</h2>
+      <div class="ornament" style="margin-bottom:24px;">✦</div>
+      <div class="input-group">
+        <label class="input-label" for="player-name">Your Name</label>
+        <input class="input-field" id="player-name" type="text" placeholder="e.g. Amara Johnson" maxlength="32" autocomplete="off" />
+      </div>
+      <button class="btn-primary" onclick="startQuiz()" style="width:100%;">Let's Play 🌸</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════ QUIZ SCREEN ════════════════════ -->
+  <div class="screen" id="screen-quiz">
+    <div class="card">
+      <div class="progress-wrap">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+      <div class="question-counter" id="q-counter">Question 1 of 10</div>
+      <p class="question-text" id="q-text"></p>
+      <div class="options-grid" id="options-grid"></div>
+      <!-- Score tracker badge -->
+      <div style="display:flex;justify-content:center;margin-top:20px;">
+        <span id="live-score" style="font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);background:rgba(212,175,55,0.08);padding:6px 20px;border-radius:50px;border:1px solid var(--border);">Score: 0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ RESULT SCREEN ════════════════════ -->
+  <div class="screen" id="screen-result">
+    <div class="card" style="text-align:center;">
+      <div style="font-size:2.5rem;margin-bottom:12px;">🎊</div>
+      <h2 class="section-title">Your Results</h2>
+      <div class="ornament">✦</div>
+      <div class="score-ring" id="score-ring">
+        <div class="score-inner">
+          <div class="score-number" id="result-num">0</div>
+          <div class="score-label">Points</div>
+        </div>
+      </div>
+      <p class="result-msg" id="result-msg"></p>
+      <p id="result-name" style="font-size:0.85rem;color:var(--text-muted);margin-bottom:28px;"></p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+        <button class="btn-primary" onclick="showLeaderboard()">🏆 Leaderboard</button>
+        <button class="btn-primary" style="background:transparent;color:var(--gold);border:1px solid var(--gold);box-shadow:none;" onclick="restartQuiz()">Play Again</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ LEADERBOARD ════════════════════ -->
+  <div class="screen" id="screen-lb">
+    <div class="card">
+      <div style="font-size:2rem;text-align:center;margin-bottom:8px;">🏆</div>
+      <h2 class="section-title">Leaderboard</h2>
+      <div class="ornament">✦</div>
+      <div class="lb-header">
+        <span>#</span>
+        <span>Player</span>
+        <span style="text-align:right;">Score</span>
+      </div>
+      <div id="lb-list"></div>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;justify-content:center;">
+      <button class="btn-primary" onclick="showScreen('screen-intro')">🏠 Home</button>
+      <button class="btn-primary" style="background:transparent;color:var(--gold);border:1px solid var(--gold);box-shadow:none;" onclick="restartQuiz()">Play Again</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<style>
+  @keyframes pulse { 0%,100%{ transform:scale(1) rotate(0deg); } 50%{ transform:scale(1.1) rotate(5deg); } }
+</style>
+
+<script>
+// ─── Questions ───────────────────────────────────────────────────────────────
+const QUESTIONS = [
+  {
+    q: "What is the bride's absolute favourite food of all time?",
+    options: ["Jollof Rice with Chicken", "Tuwo Miyar Kuka", "Pounded Yam & Egusi Soup", "Pepper Soup "],
+    answer: 0
+  },
+  {
+    q: "How did the bride and her partner first meet?",
+    options: ["Through mutual friends at a party", "At a wedding", "In the Workplace", "They were classmates in university"],
+    answer: 2
+  },
+  {
+    q: "Where is the bride's dream honeymoon destination?",
+    options: ["Paris, France 🗼", "UAE, Dubai 🌊", "Maldives 🏝️", "London, UK 🌺"],
+    answer: 1
+  },
+  {
+    q: "What was the bride's childhood nickname given by her family?",
+    options: ["Meena", "Baby Girl", "Maamaa", "Ummi"],
+    answer: 3
+  },
+  {
+    q: "Which TV show or movie is the bride completely obsessed with?",
+    options: ["Bridgerton", "Suits", "Love & Hip Hop", "Grey's Anatomy"],
+    answer: 0
+  },
+  {
+    q: "Whats her favourite colour ?",
+    options: ["Dusty Rose", "Sage Green", "Champagne Gold", "Royal Blue"],
+    answer: 2
+  },
+  {
+    q: "What is the bride's favourite thing to do on a lazy Sunday?",
+    options: ["Sleep in and binge-watch series", "Cook a big family meal", "Go to brunch with the girls", "Stay on her phone all day"],
+    answer: 3
+  },
+  {
+    q: "How many children does the bride say she wants?",
+    options: ["None !", "Just 1 or 2", "3 is the magic number", "As many as God sends!"],
+    answer: 1
+  },
+ 
+  {
+    q: "Which word best describes the bride in 1 word?",
+    options: ["Fierce & Fabulous", "Sweet & Thoughtful", "Bold & Adventurous", "Calm & Graceful"],
+    answer: 1
+  },
+
+  // ─────────────────────────────────────────────
+  // 💍 PERSONAL BRIDE QUESTIONS (NEW ADDITION)
+  // ─────────────────────────────────────────────
+
+  {
+    q: "What is the bride most likely to have been like as a child?",
+    options: [
+      "Very quiet and shy 🤍",
+      "Always talking and energetic",
+      "A little bossy but caring",
+      "Always reading or observing"
+    ],
+    answer: 3
+  },
+  {
+    q: "What is something the bride was known for growing up?",
+    options: [
+      "Being the ‘responsible one’",
+      "Always late 😭",
+      "Being the family entertainer",
+      "Avoiding attention completely"
+    ],
+    answer: 0
+  },
+  {
+    q: "When the bride is upset, what is she MOST likely to do?",
+    options: [
+      "Talk it out immediately",
+      "Go silent and think 🤍",
+      "Call multiple people",
+      "Pretend she is fine but isn’t"
+    ],
+    answer: 1
+  },
+  {
+    q: "What is MOST important to the bride in a partner?",
+    options: [
+      "Looks and style",
+      "Financial success only",
+      "Kindness and deen ❤️",
+      "Sense of humour only"
+    ],
+    answer: 2
+  },
+  {
+    q: "What is the bride’s biggest strength?",
+    options: [
+      "Staying calm under pressure 🤍",
+      "Being outspoken",
+      "Always planning ahead",
+      "Never worrying"
+    ],
+    answer: 0
+  }
+];
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let currentQ = 0, score = 0, playerName = '', answered = false;
+let leaderboard = JSON.parse(localStorage.getItem('bridalLB') || '[]');
+
+// ─── Screen router ────────────────────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    s.style.display = 'none';
+  });
+  const el = document.getElementById(id);
+  el.style.display = 'flex';
+  // force reflow for animation
+  void el.offsetWidth;
+  el.classList.add('active');
+}
+
+// ─── Start quiz ───────────────────────────────────────────────────────────────
+function startQuiz() {
+  const input = document.getElementById('player-name');
+  playerName = input.value.trim();
+  if (!playerName) { showToast('💌 Please enter your name!'); return; }
+  currentQ = 0; score = 0; answered = false;
+  renderQuestion();
+  showScreen('screen-quiz');
+}
+
+function restartQuiz() {
+  document.getElementById('player-name').value = '';
+  showScreen('screen-name');
+}
+
+// ─── Render question ──────────────────────────────────────────────────────────
+function renderQuestion() {
+  const q = QUESTIONS[currentQ];
+  const total = QUESTIONS.length;
+  const pct = (currentQ / total) * 100;
+
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('q-counter').textContent = `Question ${currentQ + 1} of ${total}`;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('live-score').textContent = `Score: ${score}`;
+
+  const grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectAnswer(i, btn);
+    // Stagger entrance
+    btn.style.animationDelay = (i * 0.07) + 's';
+    btn.style.animation = 'fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) both';
+    grid.appendChild(btn);
+  });
+  answered = false;
+}
+
+// ─── Answer selection ─────────────────────────────────────────────────────────
+function selectAnswer(idx, btn) {
+  if (answered) return;
+  answered = true;
+  const correct = QUESTIONS[currentQ].answer;
+  const allBtns = document.querySelectorAll('.option-btn');
+  allBtns.forEach(b => b.disabled = true);
+
+  if (idx === correct) {
+    btn.classList.add('correct');
+    score++;
+    showToast('✅ Correct! Well done!');
+  } else {
+    btn.classList.add('wrong');
+    allBtns[correct].classList.add('correct');
+    showToast('❌ Not quite — better luck next one!');
+  }
+  document.getElementById('live-score').textContent = `Score: ${score}`;
+
+  setTimeout(() => {
+    currentQ++;
+    if (currentQ < QUESTIONS.length) {
+      renderQuestion();
+    } else {
+      endQuiz();
+    }
+  }, 1400);
+}
+
+// ─── End quiz ─────────────────────────────────────────────────────────────────
+function endQuiz() {
+  const total = QUESTIONS.length;
+  const pct = Math.round((score / total) * 100);
+
+  // Update leaderboard
+  leaderboard.push({ name: playerName, score, date: Date.now() });
+  leaderboard.sort((a, b) => b.score - a.score);
+  localStorage.setItem('bridalLB', JSON.stringify(leaderboard));
+
+  // Progress ring
+  const ring = document.getElementById('score-ring');
+  ring.style.setProperty('--pct', (score / total * 360) + 'deg');
+
+  document.getElementById('result-num').textContent = score;
+  document.getElementById('result-name').textContent = `Great effort, ${playerName}! 🌸`;
+
+  let msg = '';
+  if (score === total) msg = '"Perfect score! You truly know the bride! 👑"';
+  else if (score >= 8)  msg = '"Wow, you\'re basically her best friend! 💕"';
+  else if (score >= 6)  msg = '"Not bad — you know her pretty well! 🌸"';
+  else if (score >= 4)  msg = '"Getting there — time to bond more! 🤍"';
+  else                  msg = '"Looks like you have some catching up to do! 😄"';
+  document.getElementById('result-msg').textContent = msg;
+
+  launchConfetti();
+  showScreen('screen-result');
+}
+
+// ─── Leaderboard ──────────────────────────────────────────────────────────────
+function showLeaderboard() {
+  const list = document.getElementById('lb-list');
+  list.innerHTML = '';
+  if (leaderboard.length === 0) {
+    list.innerHTML = '<div class="empty-board">No scores yet — be the first! 🌸</div>';
+  } else {
+    leaderboard.forEach((entry, i) => {
+      const row = document.createElement('div');
+      const cls = i === 0 ? 'top-1' : i === 1 ? 'top-2' : i === 2 ? 'top-3' : '';
+      const rankIcon = i === 0 ? '👑' : i === 1 ? '🥈' : i === 2 ? '🥉' : `<span class="lb-rank-num">${i+1}</span>`;
+      row.className = `lb-row ${cls}`;
+      row.innerHTML = `
+        <span class="lb-rank">${rankIcon}</span>
+        <span class="lb-name">${escHtml(entry.name)}</span>
+        <span class="lb-score-val">${entry.score}<span class="lb-score-pts">pts</span></span>
+      `;
+      list.appendChild(row);
+    });
+  }
+  showScreen('screen-lb');
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ─── Toast ────────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ─── Confetti ─────────────────────────────────────────────────────────────────
+function launchConfetti() {
+  const layer = document.getElementById('confetti-layer');
+  const colors = ['#d4af37','#f5e07a','#e8a0a0','#f5c6c6','#a78bfa','#fff'];
+  for (let i = 0; i < 80; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.cssText = `
+      left:${Math.random()*100}%;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      width:${Math.random()*8+4}px;height:${Math.random()*8+4}px;
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+      animation-duration:${Math.random()*2+2}s;
+      animation-delay:${Math.random()*0.8}s;
+    `;
+    layer.appendChild(p);
+    p.addEventListener('animationend', () => p.remove());
+  }
+}
+
+// ─── Sparkle canvas ───────────────────────────────────────────────────────────
+(function() {
+  const canvas = document.getElementById('sparkle-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  class Particle {
+    constructor() { this.reset(); }
+    reset() {
+      this.x = Math.random() * W; this.y = Math.random() * H;
+      this.r = Math.random() * 1.5 + 0.3;
+      this.vx = (Math.random() - 0.5) * 0.3; this.vy = (Math.random() - 0.5) * 0.3;
+      this.alpha = Math.random() * 0.5 + 0.1;
+      this.life = 0; this.maxLife = Math.random() * 200 + 100;
+    }
+    update() {
+      this.x += this.vx; this.y += this.vy; this.life++;
+      if (this.life > this.maxLife) this.reset();
+    }
+    draw() {
+      const a = this.life < 30 ? this.life/30 : this.life > this.maxLife-30 ? (this.maxLife-this.life)/30 : 1;
+      ctx.globalAlpha = this.alpha * a;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+      ctx.fillStyle = '#d4af37';
+      ctx.fill();
+    }
+  }
+
+  for (let i = 0; i < 80; i++) particles.push(new Particle());
+
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => { p.update(); p.draw(); });
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+</script>
+</body>
+</html>
